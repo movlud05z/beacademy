@@ -9,15 +9,35 @@
         /* Sənin orijinal dizayn kodların */
         .admin-main { max-width: 1200px; margin: 40px auto; padding: 20px; font-family: 'Poppins', sans-serif; }
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px; }
-        .stat-card { background: #000; color: #fff; padding: 20px; border-left: 5px solid #e60000; box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1); }
-        .staff-list { background: #fff; border: 3px solid #000; padding: 30px; margin-top: 30px; box-shadow: 10px 10px 0px #e60000; }
-        .search-container { position: relative; width: 300px; }
-        .search-container input { width: 100%; padding: 10px 15px; border: 2px solid #000; font-weight: 600; outline: none; }
+        .stat-card { background: #000; color: #fff; padding: 20px; border-left: 5px solid #e60000; }
+        .staff-list { background: #fff; border: 3px solid #000; padding: 30px; box-shadow: 10px 10px 0px #e60000; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th { background: #000; color: #fff; text-align: left; padding: 15px; text-transform: uppercase; font-size: 13px; }
-        td { padding: 15px; border-bottom: 1px solid #eee; font-size: 14px; color: #333; }
-        .action-btn { background: #000; color: #fff; border: none; padding: 8px 12px; cursor: pointer; font-size: 10px; font-weight: 700; border-radius: 4px; margin-right: 5px; }
-        .blue-tick { color: #1DA1F2; font-size: 18px; margin-left: 5px; }
+        th { background: #000; color: #fff; text-align: left; padding: 15px; font-size: 13px; }
+        td { padding: 15px; border-bottom: 1px solid #eee; font-size: 14px; }
+
+        /* Mavi Tik və Düymə Stilləri */
+        .blue-tick { 
+            color: #1DA1F2; 
+            font-size: 18px; 
+            margin-left: 8px; 
+            font-weight: bold;
+        }
+        .btn-group { display: flex; gap: 5px; justify-content: center; }
+        .action-btn { 
+            padding: 8px 12px; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 11px; 
+            font-weight: 700; 
+            color: white;
+            transition: 0.2s;
+        }
+        .btn-tick { background: #1DA1F2; } /* Mavi Tik düyməsi */
+        .btn-pass { background: #444; }    /* Parol düyməsi */
+        .btn-del { background: #e60000; }  /* Sil düyməsi */
+        .action-btn:hover { opacity: 0.8; transform: translateY(-2px); }
+
         .management-box { background: #fff; border: 3px solid #000; padding: 30px; box-shadow: 10px 10px 0px #000; }
         .input-box { margin-bottom: 15px; display: flex; border: 1px solid #ddd; padding: 5px 10px; border-radius: 5px; }
         .input-box input { border: none; outline: none; width: 100%; padding: 8px; }
@@ -29,35 +49,22 @@
     <div class="admin-main">
         <header style="display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid #000; padding-bottom: 20px; margin-bottom: 40px;">
             <div class="logo" style="font-size: 24px; font-weight: 800;"><span style="color: #e60000;">BE</span>Academy</div>
-            <div style="text-align: right;">
-                <div style="font-weight: 900;">SİSTEM ADMİNİ: <span style="color:#e60000;">BOSS</span></div>
-                <a href="index.html" style="color:#000; font-size: 12px; font-weight: 700;">SİSTEMDƏN ÇIXIŞ</a>
-            </div>
+            <div style="font-weight: 900;">SİSTEM ADMİNİ: <span style="color:#e60000;">BOSS</span></div>
         </header>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <small>Cəmi Əməkdaş</small>
-                <h2 id="totalStaff">0</h2>
-            </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 40px;">
+        <div style="display: grid; grid-template-columns: 1fr 2.5fr; gap: 40px;">
             <div class="management-box">
                 <h3>YENİ ƏMƏKDAŞ</h3>
                 <form id="addStudentForm">
                     <div class="input-box"><input type="text" id="newFullName" placeholder="Ad Soyad" required></div>
                     <div class="input-box"><input type="text" id="newUsername" placeholder="İstifadəçi adı" required></div>
                     <div class="input-box"><input type="password" id="newPass" placeholder="Parol" required></div>
-                    <button type="submit" class="login-btn">BAZAYA ƏLAVƏ ET</button>
+                    <button type="submit" class="login-btn">ƏLAVƏ ET</button>
                 </form>
             </div>
 
             <div class="staff-list">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3>ƏMƏKDAŞLARIN SİYAHISI</h3>
-                    <div class="search-container"><input type="text" id="staffSearch" placeholder="Axtar..." onkeyup="filterTable()"></div>
-                </div>
+                <h3>ƏMƏKDAŞLARIN SİYAHISI</h3>
                 <table>
                     <thead>
                         <tr>
@@ -80,27 +87,30 @@
             const data = await res.json();
             const tableBody = document.getElementById("staffTableBody");
             tableBody.innerHTML = "";
+            
             if (data) {
-                const keys = Object.keys(data);
-                document.getElementById("totalStaff").innerText = keys.length;
-                keys.forEach(key => {
+                Object.keys(data).forEach(key => {
                     const u = data[key];
-                    const tick = u.isVerified ? '<span class="blue-tick">✔</span>' : '';
+                    // Mavi tik nişanı (əgər true-dursa)
+                    const tickIcon = u.isVerified ? '<span class="blue-tick">✔</span>' : '';
+                    
                     tableBody.innerHTML += `
                         <tr>
-                            <td>${u.fullname} ${tick}</td>
+                            <td>${u.fullname} ${tickIcon}</td>
                             <td><strong>${u.username}</strong> / <span style="color:gray">${u.password}</span></td>
-                            <td style="text-align: center;">
-                                <button class="action-btn" onclick="toggleVerify('${key}', ${u.isVerified})">Tik</button>
-                                <button class="action-btn" style="background:#444" onclick="changePass('${key}')">Parol</button>
-                                <button class="action-btn" style="background:red" onclick="deleteUser('${key}')">Sil</button>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="action-btn btn-tick" onclick="toggleVerify('${key}', ${u.isVerified})">Tik Ver/Al</button>
+                                    <button class="action-btn btn-pass" onclick="changePass('${key}')">Parol</button>
+                                    <button class="action-btn btn-del" onclick="deleteUser('${key}')">Sil</button>
+                                </div>
                             </td>
                         </tr>`;
                 });
             }
         }
 
-        // Mavi Tik Funksiyası
+        // Mavi Tik Ver və ya Geri Al
         async function toggleVerify(id, currentStatus) {
             await fetch(`${DB_URL}/${id}.json`, {
                 method: 'PATCH',
@@ -109,52 +119,41 @@
             loadStaff();
         }
 
-        // Parol Dəyişmə Funksiyası
+        // Parol Yenilə
         async function changePass(id) {
             const newP = prompt("Yeni parolu daxil edin:");
-            if (newP) {
+            if (newP && newP.trim() !== "") {
                 await fetch(`${DB_URL}/${id}.json`, {
                     method: 'PATCH',
-                    body: JSON.stringify({ password: newP })
+                    body: JSON.stringify({ password: newP.trim() })
                 });
-                alert("Parol yeniləndi!");
+                alert("Parol uğurla dəyişdirildi!");
                 loadStaff();
             }
         }
 
-        // Əlavə Etmə
-        document.getElementById("addStudentForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const username = document.getElementById("newUsername").value.trim();
-            const userData = {
-                fullname: document.getElementById("newFullName").value.trim(),
-                username: username,
-                password: document.getElementById("newPass").value.trim(),
-                isVerified: false
-            };
-            await fetch(`${DB_URL}/${username}.json`, { method: 'PUT', body: JSON.stringify(userData) });
-            document.getElementById("addStudentForm").reset();
-            loadStaff();
-        });
-
+        // Sil
         async function deleteUser(id) {
-            if(confirm("Silinsin?")) {
+            if(confirm("Bu əməkdaşı silmək istədiyinizə əminsiniz?")) {
                 await fetch(`${DB_URL}/${id}.json`, { method: 'DELETE' });
                 loadStaff();
             }
         }
 
-        function filterTable() {
-            let input = document.getElementById('staffSearch').value.toUpperCase();
-            let tr = document.getElementById("staffTableBody").getElementsByTagName("tr");
-            for (let i = 0; i < tr.length; i++) {
-                let td = tr[i].getElementsByTagName("td")[0];
-                if (td) {
-                    let txtValue = td.textContent || td.innerText;
-                    tr[i].style.display = txtValue.toUpperCase().indexOf(input) > -1 ? "" : "none";
-                }
-            }
-        }
+        // Form Submit
+        document.getElementById("addStudentForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const un = document.getElementById("newUsername").value.trim();
+            const userData = {
+                fullname: document.getElementById("newFullName").value.trim(),
+                username: un,
+                password: document.getElementById("newPass").value.trim(),
+                isVerified: false
+            };
+            await fetch(`${DB_URL}/${un}.json`, { method: 'PUT', body: JSON.stringify(userData) });
+            document.getElementById("addStudentForm").reset();
+            loadStaff();
+        });
 
         window.onload = loadStaff;
     </script>
