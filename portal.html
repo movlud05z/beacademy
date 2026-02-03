@@ -31,18 +31,22 @@
         .lux-avatar { width: 130px; height: 130px; background: #fff; border-radius: 50%; border: 8px solid #fff; box-shadow: 0 25px 50px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .lux-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* THE LUX DECODER TEXT */
-        .decode-text { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 30px; color: #000; display: inline-flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: -0.5px; margin-top: 70px; min-height: 45px; }
-        .verified-badge { width: 26px; height: 26px; filter: drop-shadow(0 2px 4px rgba(0,149,246,0.3)); }
+        /* MAVİ TİK & ANIMATION */
+        .verified-badge { width: 20px; height: 20px; vertical-align: middle; margin-left: 6px; animation: tickFloat 2s ease-in-out infinite; filter: drop-shadow(0 0 5px rgba(0, 149, 246, 0.5)); }
+        @keyframes tickFloat { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-2px) scale(1.1); } }
+
+        .decode-text { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 30px; color: #000; display: inline-flex; align-items: center; justify-content: center; margin-top: 70px; min-height: 45px; }
 
         .premium-glow { position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px; border-radius: 50%; border: 3px solid #0095f6; animation: pulseGlow 2s infinite; }
-        @keyframes pulseGlow { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.1); opacity: 0; } }
+        @keyframes pulseGlow { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.2); opacity: 0; } }
 
         .gold-label { background: linear-gradient(90deg, #8a642a, #d4af37, #eddf95, #d4af37, #8a642a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 11px; font-weight: 900; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 5px; display: block; }
         
-        .staff-card { background: #fff; padding: 20px; border-radius: 18px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
-        .staff-card:hover { transform: scale(1.03); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-        .premium-card { border-left: 10px solid #0095f6 !important; background: linear-gradient(to right, #f0faff, #ffffff) !important; }
+        .staff-card { background: #fff; padding: 20px; border-radius: 18px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); border: 1px solid transparent; }
+        .staff-card:hover { transform: scale(1.02); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .premium-card { border-left: 8px solid #0095f6 !important; background: linear-gradient(to right, #f0faff, #ffffff) !important; box-shadow: 0 10px 20px rgba(0, 149, 246, 0.1); }
+
+        #userNamePortal { display: inline-flex; align-items: center; gap: 5px; }
     </style>
 </head>
 <body class="dynamic-body">
@@ -51,7 +55,7 @@
         <div class="logo"><span class="be">BE</span><span class="academy">Academy</span></div>
         <div style="display: flex; align-items: center; gap: 30px;">
             <button onclick="document.getElementById('structureModal').style.display='block'" style="background: transparent; border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 12px 28px; border-radius: 50px; font-weight: 700; cursor: pointer; font-size: 11px; letter-spacing: 2px; transition: 0.4s;">STRUCTURE</button>
-            <span style="cursor: pointer; font-size: 14px; font-weight: 600; letter-spacing: 0.5px;" onclick="openMyProfile()">SALAM, <b id="userNamePortal" style="color: #e60000;">...</b></span>
+            <span style="cursor: pointer; font-size: 14px; font-weight: 600; letter-spacing: 0.5px;" onclick="openMyProfile()">SALAM, <span id="userNamePortal">...</span></span>
             <a href="index.html" onclick="localStorage.removeItem('currentUser')" style="color: #fff; font-weight: 800; text-decoration: none; background: #e60000; padding: 10px 22px; border-radius: 12px; font-size: 11px; box-shadow: 0 10px 20px rgba(230,0,0,0.2);">LOGOUT</a>
         </div>
     </header>
@@ -124,14 +128,12 @@
         const DB_URL = "https://beacademy-c8316-default-rtdb.firebaseio.com/users";
         const CONTENT_URL = "https://beacademy-c8316-default-rtdb.firebaseio.com/portal_content";
         const currentLog = localStorage.getItem("currentUser");
-        const blueTick = `<img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" class="verified-badge">`;
+        const blueTickImg = `<img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" class="verified-badge">`;
 
-        // ULTRA LUX DECODER EFFECT
+        // LUX DECODER EFFECT
         function luxDecode(element, finalName, isVerified) {
-            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@";
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             let iteration = 0;
-            element.innerHTML = "";
-            
             const interval = setInterval(() => {
                 element.innerText = finalName.split("")
                     .map((char, index) => {
@@ -141,18 +143,22 @@
 
                 if(iteration >= finalName.length) {
                     clearInterval(interval);
-                    // Ad bitəndə Mavi Tik dərhal əlavə olunur
-                    if(isVerified) element.innerHTML = finalName + " " + blueTick;
+                    if(isVerified) element.innerHTML = finalName + " " + blueTickImg;
                 }
                 iteration += 1 / 3;
-            }, 40);
+            }, 35);
         }
 
         window.onload = async () => {
             if(!currentLog) return;
             const res = await fetch(`${DB_URL}/${currentLog}.json`);
             const u = await res.json();
-            if(u) document.getElementById("userNamePortal").innerHTML = u.fullname.toUpperCase();
+            if(u) {
+                const namePortal = document.getElementById("userNamePortal");
+                namePortal.style.color = "#e60000";
+                namePortal.style.fontWeight = "800";
+                namePortal.innerHTML = u.fullname.toUpperCase() + (u.isVerified ? blueTickImg : "");
+            }
         };
 
         async function openMyProfile(user) {
@@ -161,8 +167,6 @@
             const u = await res.json();
             if(u) {
                 document.getElementById("profileModal").style.display = "block";
-                
-                // Decode effektini başlat
                 const nameEl = document.getElementById("profName");
                 luxDecode(nameEl, u.fullname.toUpperCase(), u.isVerified);
 
@@ -202,15 +206,17 @@
                     resDiv.innerHTML += `
                     <div class="staff-card ${u.isVerified ? 'premium-card' : ''}" onclick="openMyProfile('${u.username}')">
                         <div style="display:flex; align-items:center; gap:15px;">
-                            <div style="width:50px; height:50px; border-radius:50%; background:#f0f0f0; display:flex; align-items:center; justify-content:center; overflow:hidden; border: 2px solid ${u.isVerified?'#0095f6':'#eee'}">
+                            <div style="width:55px; height:55px; border-radius:50%; background:#f0f0f0; display:flex; align-items:center; justify-content:center; overflow:hidden; border: 2px solid ${u.isVerified?'#0095f6':'#eee'}">
                                 ${u.img ? `<img src="${u.img}" style="width:100%; height:100%; object-fit:cover;">` : `<b style="color:#e60000">${u.fullname[0]}</b>`}
                             </div>
                             <div>
-                                <b style="font-size:15px; color:#000;">${u.fullname.toUpperCase()}${u.isVerified?blueTick:''}</b><br>
+                                <b style="font-size:15px; color:#000; display:flex; align-items:center; gap:5px;">
+                                    ${u.fullname.toUpperCase()}${u.isVerified ? blueTickImg : ''}
+                                </b>
                                 <span style="font-size:11px; color:#888;">ID: ${u.username}</span>
                             </div>
                         </div>
-                        <span style="font-size:22px; color:#eee;">›</span>
+                        <span style="font-size:22px; color:#ccc;">›</span>
                     </div>`;
                 }
             });
@@ -220,10 +226,9 @@
             const modal = document.getElementById("contentModal");
             modal.style.display = "block";
             document.getElementById("sectionTitle").innerText = sectionId + " MODULE";
-            document.getElementById("sectionBody").innerHTML = "Authenticating and fetching data...";
             const res = await fetch(`${CONTENT_URL}/${sectionId}.json`);
             let data = await res.json();
-            document.getElementById("sectionBody").innerHTML = data || "No data available in this sector.";
+            document.getElementById("sectionBody").innerHTML = data || "No data available.";
         }
     </script>
 </body>
