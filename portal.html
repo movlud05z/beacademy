@@ -6,17 +6,18 @@
     <title>BEAcademy | Tədris Portalı</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body.dynamic-body { background: #1a1a1a; font-family: 'Poppins', sans-serif; margin: 0; padding: 40px; color: #fff; }
+        body.dynamic-body { background: #0f0f0f; font-family: 'Poppins', sans-serif; margin: 0; padding: 40px; color: #fff; }
         .logo { font-size: 24px; font-weight: 800; text-transform: uppercase; }
         .be { color: #fff; } .academy { color: #e60000; }
-        .portal-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 15px; text-align: center; transition: 0.3s; cursor: pointer; position: relative; overflow: hidden; }
+        .portal-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 30px; border-radius: 15px; text-align: center; transition: 0.3s; cursor: pointer; position: relative; overflow: hidden; }
         .portal-card:hover { background: rgba(230, 0, 0, 0.1); transform: translateY(-5px); border-color: #e60000; }
         .login-btn { background: #e60000; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 15px; transition: 0.3s; }
         
         /* Modallar */
-        #structureModal, #profileModal, #contentModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 10000; backdrop-filter: blur(10px); overflow-y: auto; padding: 20px; }
-        .modal-container { background: #fff; max-width: 600px; margin: 50px auto; padding: 30px; border-radius: 15px; position: relative; text-align: center; color: #333; border-top: 6px solid #e60000; }
-        .close-btn { position: absolute; right: 20px; top: 15px; font-size: 30px; cursor: pointer; color: #000; }
+        #structureModal, #profileModal, #contentModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.96); z-index: 10000; backdrop-filter: blur(15px); overflow-y: auto; padding: 20px; }
+        .modal-container { background: #fff; max-width: 550px; margin: 50px auto; padding: 30px; border-radius: 20px; position: relative; text-align: center; color: #333; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        .close-btn { position: absolute; right: 20px; top: 15px; font-size: 30px; cursor: pointer; color: #000; transition: 0.3s; }
+        .close-btn:hover { transform: rotate(90deg); color: #e60000; }
         
         .org-container { max-width: 1000px; margin: 50px auto; text-align: center; color: #fff; }
         .org-node { background: #fff; color: #000; padding: 15px; border-radius: 10px; display: inline-block; min-width: 180px; border-top: 5px solid #e60000; box-shadow: 0 5px 15px rgba(230, 0, 0, 0.3); margin: 10px; }
@@ -27,40 +28,99 @@
         .line-h { height: 2px; background: #e60000; flex-grow: 1; max-width: 600px; }
         .architect-node { border-top: 5px solid #0095F6 !important; box-shadow: 0 5px 15px rgba(0, 149, 246, 0.4); margin-top: 40px; }
 
-        .search-section { margin-top: 50px; background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 15px; }
-        .staff-card { background: #fff; padding: 12px; border-radius: 8px; margin-top: 10px; color: #333; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s; }
-        .staff-card:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .search-section { margin-top: 50px; background: rgba(255, 255, 255, 0.02); padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+        .staff-card { background: #fff; padding: 15px; border-radius: 12px; margin-top: 12px; color: #333; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .staff-card:hover { transform: scale(1.03); }
         
-        /* Premium Seçilən Kartlar */
-        .premium-card { border-left: 5px solid #0095F6 !important; background: linear-gradient(90deg, #fff, #f0f8ff) !important; position: relative; }
-        .premium-card::after { content: "PREMIUM"; position: absolute; right: 40px; font-size: 8px; font-weight: 900; color: #0095F6; letter-spacing: 1px; }
+        /* PREMIUM STAFF CARD EFFECT */
+        .premium-card { 
+            background: linear-gradient(135deg, #fff 0%, #f0f7ff 100%) !important;
+            border-left: 6px solid #0095f6 !important;
+            position: relative;
+            overflow: hidden;
+        }
+        .premium-card::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(0, 149, 246, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer { 0% { left: -100%; } 100% { left: 100%; } }
 
-        .verified-badge { width: 16px; height: 16px; margin-left: 5px; vertical-align: middle; }
+        .verified-badge { width: 18px; height: 18px; margin-left: 6px; vertical-align: middle; }
 
-        /* LUX PROFIL DIZAYNI */
-        .lux-header { background: linear-gradient(135deg, #1a1a1a 0%, #333 100%); height: 100px; border-radius: 10px 10px 0 0; margin: -30px -30px 40px -30px; position: relative; }
-        .lux-avatar-wrap { position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%); }
-        .lux-avatar { width: 100px; height: 100px; background: #fff; border-radius: 50%; border: 4px solid #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 800; color: #e60000; overflow: hidden; }
+        /* MAXIMAL LUX PROFIL */
+        .lux-header { 
+            background: #111; 
+            height: 140px; 
+            border-radius: 15px 15px 0 0; 
+            margin: -30px -30px 60px -30px; 
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .lux-header::after {
+            content: 'BE ACADEMY OFFICIAL PROFILE';
+            color: rgba(255,255,255,0.2);
+            font-size: 10px;
+            letter-spacing: 5px;
+            font-weight: 700;
+        }
+        .lux-avatar-wrap { position: absolute; bottom: -45px; left: 50%; transform: translateX(-50%); z-index: 5; }
+        .lux-avatar { 
+            width: 110px; height: 110px; 
+            background: #fff; 
+            border-radius: 50%; 
+            border: 5px solid #fff; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3); 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 45px; font-weight: 800; color: #e60000; 
+            overflow: hidden;
+        }
         .lux-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .premium-glow { position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 50%; box-shadow: 0 0 20px rgba(0, 149, 246, 0.5); animation: pulse 2s infinite; pointer-events: none; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0px rgba(0, 149, 246, 0.4); } 50% { box-shadow: 0 0 20px rgba(0, 149, 246, 0.7); } 100% { box-shadow: 0 0 0px rgba(0, 149, 246, 0.4); } }
+        
+        .premium-glow { 
+            position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px; 
+            border-radius: 50%; 
+            border: 2px solid #0095F6;
+            animation: rotateGlow 4s linear infinite; 
+        }
+        @keyframes rotateGlow {
+            0% { box-shadow: 0 0 5px #0095F6, inset 0 0 5px #0095F6; transform: rotate(0deg); }
+            50% { box-shadow: 0 0 20px #0095F6, inset 0 0 10px #0095F6; }
+            100% { box-shadow: 0 0 5px #0095F6, inset 0 0 5px #0095F6; transform: rotate(360deg); }
+        }
+
+        .gold-label {
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body class="dynamic-body">
 
-    <header style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 20px;">
+    <header style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px;">
         <div class="logo"><span class="be">BE</span><span class="academy">Academy</span></div>
-        <button onclick="document.getElementById('structureModal').style.display='block'" style="background: transparent; border: 2px solid #fff; color: #fff; padding: 8px 20px; border-radius: 30px; font-weight: 800; cursor: pointer; font-size: 11px; letter-spacing: 1px;">AKADEMİYA STRUKTURU</button>
+        <button onclick="document.getElementById('structureModal').style.display='block'" style="background: transparent; border: 1px solid rgba(255,255,255,0.5); color: #fff; padding: 10px 25px; border-radius: 30px; font-weight: 700; cursor: pointer; font-size: 10px; letter-spacing: 1px; transition: 0.3s;">STRUKTUR</button>
         <div style="color: #fff; display: flex; align-items: center; gap: 20px;">
-            <span style="cursor: pointer;" onclick="openMyProfile()">Xoş gəldin, <b id="userNamePortal" style="color: #e60000; text-decoration: underline;">...</b></span>
-            <a href="index.html" onclick="localStorage.removeItem('currentUser')" style="color: #fff; font-weight: 700; text-decoration: none; background: #e60000; padding: 6px 15px; border-radius: 4px; font-size: 13px;">ÇIXIŞ</a>
+            <span style="cursor: pointer; font-size: 14px;" onclick="openMyProfile()">Salam, <b id="userNamePortal" style="color: #e60000;">...</b></span>
+            <a href="index.html" onclick="localStorage.removeItem('currentUser')" style="color: #fff; font-weight: 800; text-decoration: none; background: #e60000; padding: 8px 18px; border-radius: 6px; font-size: 11px; box-shadow: 0 4px 15px rgba(230,0,0,0.3);">ÇIXIŞ</a>
         </div>
     </header>
 
     <div id="structureModal">
         <span class="close-btn" onclick="document.getElementById('structureModal').style.display='none'" style="color: #fff;">&times;</span>
         <div class="org-container">
-            <h2 style="margin-bottom: 40px; letter-spacing: 2px;">BE ACADEMY İDARƏ HEYƏTİ</h2>
+            <h2 style="margin-bottom: 40px; letter-spacing: 2px; font-weight: 800;">İDARƏ HEYƏTİ</h2>
             <div class="org-node" style="min-width: 250px;"><span>BE Academy Rəhbəri</span><b>Elçin Mahmudov</b></div>
             <div class="line-v"></div>
             <div class="line-h-container"><div class="line-h"></div></div>
@@ -76,51 +136,59 @@
         </div>
     </div>
 
-    <h1 style="color: #fff; margin: 40px 0 20px; font-weight: 800; text-transform: uppercase; font-size: 22px;">Tədris Bölmələri</h1>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
+    <h1 style="color: #fff; margin: 40px 0 25px; font-weight: 800; text-transform: uppercase; font-size: 20px; letter-spacing: 1px;">Tədris Bölmələri</h1>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px;">
         <div class="portal-card" onclick="openSection('IT')"><h3>İT</h3><button class="login-btn">DAXİL OL</button></div>
         <div class="portal-card" onclick="openSection('KEA')"><h3>KEA</h3><button class="login-btn">DAXİL OL</button></div>
         <div class="portal-card" onclick="openSection('BEYAZ')"><h3>BƏYAZ ƏŞYA</h3><button class="login-btn">DAXİL OL</button></div>
         <div class="portal-card" onclick="openSection('TV')"><h3>TV</h3><button class="login-btn">DAXİL OL</button></div>
-        <div class="portal-card" style="border-color: #2ecc71;" onclick="openSection('EXAMS')"><h3 style="color: #2ecc71;">İMTAHANLAR</h3><button class="login-btn" style="background: #2ecc71;">YOXLA</button></div>
-        <div class="portal-card" onclick="openSection('RESOURCES')"><h3>AKADEMİYA RESURLARI</h3><button class="login-btn" style="background:#333;">BAX</button></div>
+        <div class="portal-card" style="border-color: #2ecc71; background: rgba(46, 204, 113, 0.05);" onclick="openSection('EXAMS')"><h3 style="color: #2ecc71;">İMTAHANLAR</h3><button class="login-btn" style="background: #2ecc71;">BAŞLA</button></div>
+        <div class="portal-card" onclick="openSection('RESOURCES')"><h3>RESURLAR</h3><button class="login-btn" style="background:#222;">BAX</button></div>
     </div>
 
     <div id="contentModal">
         <div class="modal-container">
             <span class="close-btn" onclick="document.getElementById('contentModal').style.display='none'">&times;</span>
-            <h2 id="sectionTitle" style="color:#e60000;"></h2>
-            <hr>
-            <div id="sectionBody" style="margin-top:20px; color:#333; text-align: left;">Hələ ki, məlumat yoxdur.</div>
+            <h2 id="sectionTitle" style="color:#e60000; font-weight: 800;"></h2>
+            <hr style="opacity: 0.1; margin: 20px 0;">
+            <div id="sectionBody" style="margin-top:20px; color:#333; text-align: left; line-height: 1.6;">Yüklənir...</div>
         </div>
     </div>
 
     <div class="search-section">
-        <h2 style="color: #fff; margin-bottom: 15px; font-size: 16px; opacity: 0.8;">🔍 ƏMƏKDAŞLAR</h2>
-        <input type="text" id="staffSearchInput" oninput="searchStaff()" placeholder="Ad yaz..." style="width:100%; max-width:400px; padding:12px; border-radius:5px; border:none; background: rgba(255,255,255,0.1); color: #fff;">
-        <div id="staffSearchResults" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-top: 20px;"></div>
+        <h2 style="color: #fff; margin-bottom: 20px; font-size: 14px; letter-spacing: 2px; opacity: 0.6; font-weight: 700;">🔍 ƏMƏKDAŞLARIN REYESTRİ</h2>
+        <input type="text" id="staffSearchInput" oninput="searchStaff()" placeholder="Axtarış üçün ad daxil edin..." style="width:100%; max-width:450px; padding:15px 20px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); color: #fff; font-family: inherit; outline: none; transition: 0.3s;">
+        <div id="staffSearchResults" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; margin-top: 25px;"></div>
     </div>
 
     <div id="profileModal">
-        <div class="modal-container" style="padding: 30px 0 40px 0; overflow: hidden;">
-            <span class="close-btn" onclick="document.getElementById('profileModal').style.display='none'" style="z-index: 10; color: #fff;">&times;</span>
+        <div class="modal-container" style="padding: 30px 0 50px 0; overflow: hidden; border: none;">
+            <span class="close-btn" onclick="document.getElementById('profileModal').style.display='none'" style="z-index: 20; color: #fff;">&times;</span>
+            
             <div class="lux-header" id="luxHeader"></div>
+            
             <div class="lux-avatar-wrap">
-                <div class="lux-avatar" id="profInit"></div>
                 <div id="premiumGlow"></div>
+                <div class="lux-avatar" id="profInit"></div>
             </div>
-            <div style="padding: 0 30px;">
-                <h2 id="profName" style="margin: 0; font-size: 26px; font-weight: 800; color: #1a1a1a;"></h2>
-                <p id="profUser" style="color:#666; font-weight:600; font-size: 14px; margin-top: 5px;"></p>
-                <div id="premiumBadge" style="display:none; margin: 15px auto; width: fit-content; background: #0095F6; color: white; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; letter-spacing: 1px;">PREMIUM MEMBER</div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px;">
-                    <div style="background: #f8f8f8; padding: 15px; border-radius: 12px; border-bottom: 3px solid #e60000;">
-                        <span style="display: block; font-size: 10px; color: #888; font-weight: 700;">STATUS</span>
-                        <span style="font-size: 13px; font-weight: 700;">Aktiv Üzv</span>
+
+            <div style="padding: 0 40px;">
+                <div id="goldTag" class="gold-label" style="display: none; margin-bottom: 10px;">★ VERIFIED PROFESSIONAL ★</div>
+                <h2 id="profName" style="margin: 0; font-size: 28px; font-weight: 800; color: #000; letter-spacing: -0.5px;"></h2>
+                <p id="profUser" style="color:#888; font-weight:600; font-size: 15px; margin-top: 5px;"></p>
+                
+                <div id="premiumBadge" style="display:none; margin: 20px auto; width: fit-content; background: #000; color: #fff; padding: 6px 18px; border-radius: 50px; font-size: 11px; font-weight: 800; letter-spacing: 2px; box-shadow: 0 10px 20px rgba(0,0,0,0.2);">OFFICIAL MEMBER</div>
+
+                <div style="height: 1px; background: #eee; margin: 30px 0;"></div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div style="text-align: left; padding: 15px; background: #fcfcfc; border-radius: 15px; border: 1px solid #f0f0f0;">
+                        <small style="color: #aaa; font-weight: 800; font-size: 9px; letter-spacing: 1px;">POSITION</small>
+                        <div style="font-weight: 700; color: #333; margin-top: 5px;">BE Academy Staff</div>
                     </div>
-                    <div style="background: #f8f8f8; padding: 15px; border-radius: 12px; border-bottom: 3px solid #0095F6;">
-                        <span style="display: block; font-size: 10px; color: #888; font-weight: 700;">BÖLMƏ</span>
-                        <span style="font-size: 13px; font-weight: 700;">BE Academy</span>
+                    <div style="text-align: left; padding: 15px; background: #fcfcfc; border-radius: 15px; border: 1px solid #f0f0f0;">
+                        <small style="color: #aaa; font-weight: 800; font-size: 9px; letter-spacing: 1px;">VERIFICATION</small>
+                        <div id="verifStatus" style="font-weight: 700; color: #333; margin-top: 5px;">Standard</div>
                     </div>
                 </div>
             </div>
@@ -144,36 +212,36 @@
             const modal = document.getElementById("contentModal");
             const title = document.getElementById("sectionTitle");
             const body = document.getElementById("sectionBody");
-
             modal.style.display = "block";
-            title.innerText = sectionId + " Bölməsi";
-            body.innerHTML = "<div style='text-align:center;'>Yüklənir...</div>";
+            title.innerText = sectionId + " BÖLMƏSİ";
+            body.innerHTML = "<div style='text-align:center; padding: 40px;'>Yüklənir...</div>";
 
             try {
                 const res = await fetch(`${CONTENT_URL}/${sectionId}.json`);
                 let data = await res.json();
-                
                 if(data) {
                     const pdfMatch = data.match(/href="(data:application\/pdf;base64,.*?)"/);
                     const titleMatch = data.match(/<h2>(.*?)<\/h2>/);
                     const cleanFileName = titleMatch ? titleMatch[1].replace(/\s+/g, '_') : "material";
-
                     let downloadHtml = "";
                     if(pdfMatch) {
                         downloadHtml = `
-                        <div style="margin-top:20px; padding:15px; background:#f0fff4; border:1px solid #c6f6d5; border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
-                            <span style="font-weight:700; color:#276749; font-size:14px;">📄 Dərslik Yükləməyə Hazırdır</span>
+                        <div style="margin-top:30px; padding:20px; background:#f8fff9; border:1px dashed #2ecc71; border-radius:15px; display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <b style="display:block; color:#2ecc71; font-size:14px;">PDF SƏNƏD HAZIRDIR</b>
+                                <small style="color:#888;">Resursu cihazınıza endirə bilərsiniz</small>
+                            </div>
                             <a href="${pdfMatch[1]}" download="${cleanFileName}.pdf" 
-                               style="background:#28a745; color:white; padding:10px 20px; text-decoration:none; border-radius:6px; font-weight:800; font-size:12px; box-shadow:0 4px 10px rgba(40,167,69,0.2);">
-                               💾 YÜKLƏ (PDF)
+                               style="background:#2ecc71; color:white; padding:12px 25px; text-decoration:none; border-radius:8px; font-weight:800; font-size:12px; box-shadow:0 10px 20px rgba(46,204,113,0.3);">
+                               YÜKLƏ (PDF)
                             </a>
                         </div>`;
                     }
                     body.innerHTML = data + downloadHtml;
                 } else {
-                    body.innerHTML = "<div style='text-align:center; font-style:italic; color:#666;'>Hələ ki, məlumat yoxdur.</div>";
+                    body.innerHTML = "<div style='text-align:center; padding: 40px; color:#999;'>Məlumat tapılmadı.</div>";
                 }
-            } catch (err) { body.innerHTML = "Xəta!"; }
+            } catch (err) { body.innerHTML = "Sistem xətası!"; }
         }
 
         async function openMyProfile(user) {
@@ -186,25 +254,30 @@
                 document.getElementById("profUser").innerText = "@" + u.username;
                 
                 const avatarDiv = document.getElementById("profInit");
-                if(u.img) {
-                    avatarDiv.innerHTML = `<img src="${u.img}">`;
-                } else {
-                    avatarDiv.innerText = u.fullname[0];
-                }
+                avatarDiv.innerHTML = u.img ? `<img src="${u.img}">` : u.fullname[0];
 
-                // Premium Effektləri
                 const glow = document.getElementById("premiumGlow");
                 const badge = document.getElementById("premiumBadge");
                 const header = document.getElementById("luxHeader");
+                const goldTag = document.getElementById("goldTag");
+                const vStatus = document.getElementById("verifStatus");
 
                 if(u.isVerified) {
                     glow.className = "premium-glow";
                     badge.style.display = "block";
-                    header.style.background = "linear-gradient(135deg, #004e92 0%, #000428 100%)";
+                    goldTag.style.display = "block";
+                    vStatus.innerText = "Verified Account";
+                    vStatus.style.color = "#0095f6";
+                    header.style.background = "linear-gradient(135deg, #000 0%, #1a1a1a 100%)";
+                    header.style.borderBottom = "3px solid #0095f6";
                 } else {
                     glow.className = "";
                     badge.style.display = "none";
-                    header.style.background = "linear-gradient(135deg, #1a1a1a 0%, #333 100%)";
+                    goldTag.style.display = "none";
+                    vStatus.innerText = "Standard";
+                    vStatus.style.color = "#333";
+                    header.style.background = "#111";
+                    header.style.borderBottom = "none";
                 }
             }
         }
@@ -221,16 +294,16 @@
                     const isPrem = u.isVerified ? 'premium-card' : '';
                     resDiv.innerHTML += `
                     <div class="staff-card ${isPrem}" onclick="openMyProfile('${u.username}')">
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <div style="width:40px; height:40px; border-radius:50%; background:#f0f0f0; display:flex; align-items:center; justify-content:center; overflow:hidden; border: 2px solid ${u.isVerified?'#0095F6':'#eee'}">
+                        <div style="display:flex; align-items:center; gap:15px; position:relative; z-index:2;">
+                            <div style="width:50px; height:50px; border-radius:50%; background:#f5f5f5; display:flex; align-items:center; justify-content:center; overflow:hidden; border: 2px solid ${u.isVerified?'#0095f6':'#eee'}">
                                 ${u.img ? `<img src="${u.img}" style="width:100%; height:100%; object-fit:cover;">` : `<b style="color:#e60000">${u.fullname[0]}</b>`}
                             </div>
-                            <div style="line-height:1.2">
-                                <b style="font-size:14px;">${u.fullname}${u.isVerified?blueTick:''}</b><br>
-                                <span style="font-size:11px; color:#888;">@${u.username}</span>
+                            <div>
+                                <b style="font-size:15px; color:#111;">${u.fullname}${u.isVerified?blueTick:''}</b><br>
+                                <span style="font-size:12px; color:#777;">Member</span>
                             </div>
                         </div>
-                        <span style="color:#ccc;">→</span>
+                        <span style="font-weight:900; color:#ddd; font-size:20px;">›</span>
                     </div>`;
                 }
             });
