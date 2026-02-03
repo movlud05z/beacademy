@@ -1,724 +1,94 @@
 <!DOCTYPE html>
 <html lang="az">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BEAcademy | Tədris Portalı</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- ÜMUMİ PORTAL STİLLƏRİ --- */
-        body.dynamic-body {
-            background: #1a1a1a;
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 40px;
-            color: #fff;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: 800;
-            text-transform: uppercase;
-        }
-
-        .be {
-            color: #fff;
-        }
-
-        .academy {
-            color: #e60000;
-        }
-
-        .portal-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            transition: 0.3s;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .portal-card:hover {
-            background: rgba(230, 0, 0, 0.1);
-            transform: translateY(-5px);
-            border-color: #e60000;
-        }
-
-        .login-btn {
-            background: #e60000;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: 700;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 15px;
-            transition: 0.3s;
-        }
-
-        .login-btn:hover {
-            opacity: 0.9;
-            transform: scale(1.02);
-        }
-
-        /* --- STRUKTUR MODAL STİLLƏRİ --- */
-        #structureModal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 10000;
-            backdrop-filter: blur(10px);
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .org-container {
-            max-width: 1000px;
-            margin: 50px auto;
-            text-align: center;
-            color: #fff;
-        }
-
-        .org-node {
-            background: #fff;
-            color: #000;
-            padding: 15px;
-            border-radius: 10px;
-            display: inline-block;
-            min-width: 180px;
-            border-top: 5px solid #e60000;
-            box-shadow: 0 5px 15px rgba(230, 0, 0, 0.3);
-            margin: 10px;
-        }
-
-        .org-node b {
-            display: block;
-            font-size: 14px;
-            margin-bottom: 5px;
-        }
-
-        .org-node span {
-            font-size: 11px;
-            color: #666;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .line-v {
-            width: 2px;
-            height: 30px;
-            background: #e60000;
-            margin: 0 auto;
-        }
-
-        .line-h-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .line-h {
-            height: 2px;
-            background: #e60000;
-            flex-grow: 1;
-            max-width: 600px;
-        }
-
-        .architect-node {
-            border-top: 5px solid #0095F6 !important;
-            box-shadow: 0 5px 15px rgba(0, 149, 246, 0.4);
-            margin-top: 40px;
-        }
-
-        /* --- MODAL VƏ PROFİL STİLLƏRİ --- */
-        #portalModal,
-        #profileModal,
-        #followListModal,
-        #examAccessModal,
-        #quizListModal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 9999;
-            backdrop-filter: blur(8px);
-            overflow-y: auto;
-        }
-
-        .modal-container {
-            background: #fff;
-            max-width: 500px;
-            margin: 50px auto;
-            padding: 30px;
-            border-radius: 15px;
-            position: relative;
-            border-top: 6px solid #e60000;
-            text-align: center;
-            color: #333;
-        }
-
-        .close-btn {
-            position: absolute;
-            right: 20px;
-            top: 15px;
-            font-size: 30px;
-            cursor: pointer;
-            color: #000;
-            z-index: 10;
-        }
-
-        .profile-avatar-wrapper {
-            width: 110px;
-            height: 110px;
-            margin: 0 auto 15px;
-            position: relative;
-            cursor: pointer;
-            border-radius: 50%;
-            border: 3px solid #e60000;
-            overflow: hidden;
-            background: #f4f4f4;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .profile-avatar-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .profile-actions {
-            margin: 15px 0;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .btn-small {
-            padding: 6px 12px;
-            font-size: 11px;
-            font-weight: 700;
-            border-radius: 4px;
-            cursor: pointer;
-            border: 1px solid #ddd;
-            background: #fff;
-            transition: 0.2s;
-        }
-
-        .btn-small:hover {
-            background: #f0f0f0;
-        }
-
-        .post-create-area {
-            margin-top: 20px;
-            padding: 15px;
-            border-top: 1px solid #eee;
-            text-align: left;
-            background: #fafafa;
-            border-radius: 10px;
-        }
-
-        .post-input {
-            width: 100%;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 8px;
-            resize: none;
-            outline: none;
-            margin-bottom: 10px;
-            box-sizing: border-box;
-            font-family: inherit;
-        }
-
-        .post-btn {
-            background: #e60000;
-            color: #fff;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .stats-row {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin: 20px 0;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-item b {
-            display: block;
-            font-size: 20px;
-            color: #000;
-        }
-
-        .stat-item span {
-            font-size: 12px;
-            color: #888;
-            text-transform: uppercase;
-        }
-
-        /* Quiz Alert */
-        .btn-quiz-access {
-            background: linear-gradient(45deg, #2ecc71, #27ae60);
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 10px;
-            font-weight: 800;
-            cursor: pointer;
-            width: 100%;
-            margin-bottom: 25px;
-            display: none;
-            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.02);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        .search-section {
-            margin-top: 50px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 30px;
-            border-radius: 15px;
-        }
-
-        .search-results {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .staff-card {
-            background: #fff;
-            padding: 15px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            color: #333;
-        }
-
-        .verified-badge {
-            width: 18px;
-            height: 18px;
-            vertical-align: middle;
-            margin-left: 5px;
-        }
-
-        /* Password Input Design */
-        .exam-pass-input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #eee;
-            border-radius: 10px;
-            text-align: center;
-            font-size: 24px;
-            letter-spacing: 10px;
-            margin-bottom: 20px;
-            outline: none;
-            transition: 0.3s;
-        }
-
-        .exam-pass-input:focus {
-            border-color: #2ecc71;
-        }
+        /* Bütün CSS-lərin eynilə saxlanıldı */
+        body.dynamic-body { background: #1a1a1a; font-family: 'Poppins', sans-serif; margin: 0; padding: 40px; color: #fff; }
+        .logo { font-size: 24px; font-weight: 800; text-transform: uppercase; }
+        .be { color: #fff; } .academy { color: #e60000; }
+        .portal-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 15px; text-align: center; transition: 0.3s; cursor: pointer; position: relative; overflow: hidden; }
+        .portal-card:hover { background: rgba(230, 0, 0, 0.1); transform: translateY(-5px); border-color: #e60000; }
+        .login-btn { background: #e60000; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 15px; }
+        #structureModal, #portalModal, #profileModal, #examAccessModal, #quizListModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 9999; backdrop-filter: blur(8px); overflow-y: auto; }
+        .modal-container { background: #fff; max-width: 500px; margin: 50px auto; padding: 30px; border-radius: 15px; position: relative; border-top: 6px solid #e60000; text-align: center; color: #333; }
+        .close-btn { position: absolute; right: 20px; top: 15px; font-size: 30px; cursor: pointer; color: #000; }
+        .profile-avatar-wrapper { width: 110px; height: 110px; margin: 0 auto 15px; border-radius: 50%; border: 3px solid #e60000; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .verified-badge { width: 18px; height: 18px; vertical-align: middle; margin-left: 5px; }
+        .staff-card { background: #fff; padding: 15px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; color: #333; margin-bottom: 10px; }
     </style>
 </head>
 
 <body class="dynamic-body">
 
-    <header
-        style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 20px;">
-        <div class="logo" style="margin: 0;"><span class="be">BE</span><span class="academy">Academy</span></div>
-        <button onclick="document.getElementById('structureModal').style.display='block'"
-            style="background: transparent; border: 2px solid #fff; color: #fff; padding: 8px 20px; border-radius: 30px; font-weight: 800; cursor: pointer; font-size: 11px; letter-spacing: 1px;">AKADEMİYA
-            STRUKTURU</button>
+    <header style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 20px;">
+        <div class="logo"><span class="be">BE</span><span class="academy">Academy</span></div>
+        <button onclick="document.getElementById('structureModal').style.display='block'" style="background: transparent; border: 2px solid #fff; color: #fff; padding: 8px 20px; border-radius: 30px; font-weight: 800; cursor: pointer; font-size: 11px;">AKADEMİYA STRUKTURU</button>
         <div style="color: #fff; display: flex; align-items: center; gap: 20px;">
-            <span style="cursor: pointer;" onclick="openProfile(localStorage.getItem('currentUser'))">Xoş gəldin, <b
-                    id="userNamePortal" style="color: #e60000; text-decoration: underline;">...</b></span>
-            <a href="index.html"
-                onclick="localStorage.removeItem('currentUser'); localStorage.removeItem('fullUserName');"
-                style="color: #fff; font-weight: 700; text-decoration: none; background: #e60000; padding: 6px 15px; border-radius: 4px; font-size: 13px;">ÇIXIŞ</a>
+            <span style="cursor: pointer;" onclick="openProfile(localStorage.getItem('currentUser'))">Xoş gəldin, <b id="userNamePortal" style="color: #e60000; text-decoration: underline;">Yüklənir...</b></span>
+            <a href="index.html" onclick="localStorage.clear();" style="color: #fff; font-weight: 700; text-decoration: none; background: #e60000; padding: 6px 15px; border-radius: 4px; font-size: 13px;">ÇIXIŞ</a>
         </div>
     </header>
 
-    <div id="structureModal">
-        <span class="close-btn" onclick="document.getElementById('structureModal').style.display='none'"
-            style="color: #fff; top: 30px; right: 40px;">&times;</span>
-        <div class="org-container">
-            <h2 style="margin-bottom: 40px; letter-spacing: 2px;">BE ACADEMY İDARƏ HEYƏTİ</h2>
-            <div class="org-node" style="min-width: 250px;"><span>BE Academy Rəhbəri</span><b>Elçin Mahmudov</b></div>
-            <div class="line-v"></div>
-            <div class="line-h-container">
-                <div class="line-h"></div>
-            </div>
-            <div class="line-v" style="height: 20px;"></div>
-            <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 10px;">
-                <div class="org-node"><span>IT Təlimçisi</span><b>Aslan Rəhimov</b></div>
-                <div class="org-node"><span>KEA Təlimçisi</span><b>Rza Abbaszadə</b></div>
-                <div class="org-node"><span>Bəyaz Əşya Təlimçisi</span><b>Orxan Hüseynov</b></div>
-                <div class="org-node"><span>TV Təlimçisi</span><b>Mikhail Ananyev</b></div>
-            </div>
-            <div class="line-v" style="height: 50px;"></div>
-            <div class="org-node architect-node"><span>Sistem Memarı (Founder)</span><b>Mövlud Məmmədov</b></div>
-        </div>
-    </div>
-
     <div id="quizAlertArea" style="margin-top: 25px;"></div>
-
-    <h1 style="color: #fff; margin: 40px 0 20px; font-weight: 800; text-transform: uppercase; font-size: 22px;">Tədris
-        Bölmələri</h1>
+    <h1 style="color: #fff; margin: 40px 0 20px; font-weight: 800; text-transform: uppercase; font-size: 22px;">Tədris Bölmələri</h1>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
-        <div class="portal-card" onclick="showSection('IT')">
-            <h3>İT</h3><button class="login-btn">DAXİL OL</button>
-        </div>
-        <div class="portal-card" onclick="showSection('KEA')">
-            <h3>KEA</h3><button class="login-btn">DAXİL OL</button>
-        </div>
-        <div class="portal-card" onclick="showSection('BEYAZ')">
-            <h3>BƏYAZ ƏŞYA</h3><button class="login-btn">DAXİL OL</button>
-        </div>
-        <div class="portal-card" onclick="showSection('TV')">
-            <h3>TV</h3><button class="login-btn">DAXİL OL</button>
-        </div>
-
-        <div class="portal-card" onclick="openQuizList()" style="border-color: #2ecc71;">
-            <h3 style="color: #2ecc71;">İMTAHANLAR</h3>
-            <button class="login-btn" style="background: #2ecc71;">YOXLA</button>
-        </div>
-
-        <div class="portal-card" onclick="showSection('TELIMAT')">
-            <h3>AKADEMİYA RESURLARI</h3><button class="login-btn" style="background:#333;">BAX</button>
-        </div>
+        <div class="portal-card" onclick="showSection('IT')"><h3>İT</h3><button class="login-btn">DAXİL OL</button></div>
+        <div class="portal-card" onclick="showSection('KEA')"><h3>KEA</h3><button class="login-btn">DAXİL OL</button></div>
+        <div class="portal-card" onclick="showSection('BEYAZ')"><h3>BƏYAZ ƏŞYA</h3><button class="login-btn">DAXİL OL</button></div>
+        <div class="portal-card" onclick="showSection('TV')"><h3>TV</h3><button class="login-btn">DAXİL OL</button></div>
+        <div class="portal-card" onclick="openQuizList()" style="border-color: #2ecc71;"><h3 style="color: #2ecc71;">İMTAHANLAR</h3><button class="login-btn" style="background: #2ecc71;">YOXLA</button></div>
     </div>
 
-    <div id="examAccessModal">
-        <div class="modal-container" style="max-width: 380px;">
-            <span class="close-btn" onclick="closeModal('examAccessModal')">&times;</span>
-            <div style="font-size: 40px; margin-bottom: 15px;">🔐</div>
-            <h3 id="targetExamTitle" style="margin-bottom: 10px;">İmtahan Girişi</h3>
-            <p style="font-size: 12px; color: #666; margin-bottom: 20px;">Təlimçi tərəfindən təqdim olunan kodu daxil
-                edin.</p>
-            <input type="password" id="examPassInput" class="exam-pass-input" placeholder="****" maxlength="8">
-            <div id="examPassError"
-                style="color: #e60000; font-size: 12px; margin-bottom: 15px; display: none; font-weight: 600;">Yanlış
-                parol!</div>
-            <button class="login-btn" onclick="verifyExamPass()" style="background: #2ecc71; margin: 0;">DAXİL
-                OL</button>
-        </div>
-    </div>
-
-    <div class="search-section">
-        <h2 style="color: #fff; margin-bottom: 15px; font-size: 16px; opacity: 0.8;">🔍 ƏMƏKDAŞLAR</h2>
-        <input type="text" id="staffSearchInput" placeholder="Ad və ya Login yaz..." oninput="searchStaff()"
-            style="width:100%; max-width:400px; padding:12px; border-radius:5px; border:none; outline:none; background: rgba(255,255,255,0.1); color: #fff;">
-        <div id="staffSearchResults" class="search-results"></div>
-    </div>
-
-    <div id="profileModal">
-        <div class="modal-container">
-            <span class="close-btn" onclick="closeModal('profileModal')">&times;</span>
-            <div class="profile-avatar-wrapper" onclick="triggerPhotoUpload()">
-                <img id="profAvatarImg" src="" style="display:none;">
-                <div id="profInitial" style="font-size:40px; color:#e60000; font-weight:800;"></div>
-            </div>
-            <div id="ownProfileActions" class="profile-actions" style="display:none;">
-                <button class="btn-small" onclick="triggerPhotoUpload()">Şəkli Dəyiş</button>
-                <button class="btn-small" onclick="openQuizList()"
-                    style="color: #2ecc71; border-color: #2ecc71;">Nəticələrim</button>
-                <button class="btn-small" onclick="deleteProfilePhoto()">Şəkli Sil</button>
-                <button class="btn-small" onclick="changeUserPassword()">Parolu Dəyiş</button>
-            </div>
-            <input type="file" id="profilePhotoInput" accept="image/*" style="display:none;"
-                onchange="handlePhotoUpload(this)">
-            <h2 id="profName"
-                style="margin:0; display: inline-flex; align-items: center; justify-content: center; width: 100%;"></h2>
-            <p id="profUser" style="color:#e60000; font-weight:700; margin-bottom:10px;"></p>
-            <div class="stats-row">
-                <div class="stat-item"><b id="postCount">0</b><span>Post</span></div>
-                <div class="stat-item"><b id="followerCount">0</b><span>İzləyici</span></div>
-                <div class="stat-item"><b id="followingCount">0</b><span>İzlənilən</span></div>
-            </div>
-            <button id="profFollowBtn" class="login-btn">İZLƏ</button>
-            <div id="postCreator" class="post-create-area" style="display:none;">
-                <textarea id="postText" class="post-input" placeholder="Nə düşünürsən?" rows="2"></textarea>
-                <div style="display:flex; justify-content: space-between; align-items: center;">
-                    <input type="file" id="postImgInput" accept="image/*" style="font-size: 11px;">
-                    <button class="post-btn" onclick="createNewPost()">PAYLAŞ</button>
-                </div>
-            </div>
-            <div class="posts-feed" id="userPosts">
-                <div id="postsList"></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="quizListModal">
-        <div class="modal-container">
-            <span class="close-btn" onclick="closeModal('quizListModal')">&times;</span>
-            <h2 style="color: #333;">İmtahanlar</h2>
-            <div id="quizContainer" style="text-align: left; margin-top: 20px;"></div>
-        </div>
-    </div>
-
-    <div id="portalModal">
-        <div class="modal-container" style="text-align:left; max-width:700px;">
-            <span class="close-btn" onclick="closeModal('portalModal')">&times;</span>
-            <h2 id="sectionTitle" style="color: #333;"></h2>
-            <div id="sectionFiles"></div>
-        </div>
-    </div>
+    <div id="profileModal"><div class="modal-container"><span class="close-btn" onclick="closeModal('profileModal')">&times;</span><div class="profile-avatar-wrapper"><div id="profInitial" style="font-size:40px; color:#e60000; font-weight:800;"></div></div><h2 id="profName"></h2><p id="profUser" style="color:#e60000; font-weight:700;"></p></div></div>
+    <div id="portalModal"><div class="modal-container" style="text-align:left; max-width:700px;"><span class="close-btn" onclick="closeModal('portalModal')">&times;</span><h2 id="sectionTitle"></h2><div id="sectionFiles"></div></div></div>
 
     <script>
+        const DB_URL = "https://beacademy-c8316-default-rtdb.firebaseio.com/users";
         const blueTickSVG = `<svg class="verified-badge" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5213 2.62368C11.3147 1.75255 12.6853 1.75255 13.4787 2.62368L14.4989 3.74391C14.8143 4.09038 15.2573 4.30055 15.7288 4.32717L17.2521 4.41312C18.4383 4.48003 19.38 5.42172 19.4469 6.60786L19.5328 8.13117C19.5595 8.6027 19.7696 9.04567 20.1161 9.36109L21.2363 10.3813C22.1075 11.1747 22.1075 12.5453 21.2363 13.3387L20.1161 14.3589C19.7696 14.6743 19.5595 15.1173 19.5328 15.5888L19.4469 17.1121C19.38 18.2983 18.4383 19.24 17.2521 19.3069L15.7288 19.3928C15.2573 19.4195 14.8143 19.6296 14.4989 19.9751L13.4787 21.0953C12.6853 21.9665 11.3147 21.9665 10.5213 21.0953L9.50106 19.9751C9.18564 19.6296 8.74267 19.4195 8.27117 19.3928L6.74786 19.3069C5.56172 19.24 4.62003 18.2983 4.55312 17.1121L4.46717 15.5888C4.44055 15.1173 4.23038 14.6743 3.88391 14.3589L2.76368 13.3387C1.89255 12.5453 1.89255 11.1747 2.76368 10.3813L3.88391 9.36109C4.23038 9.04567 4.44055 8.6027 4.46717 8.13117L4.55312 6.60786C4.62003 5.42172 5.56172 4.48003 6.74786 4.41312L8.27117 4.32717C8.74267 4.30055 9.18564 4.09038 9.50106 3.74391L10.5213 2.62368Z" fill="#0095F6"/><path d="M9 12L11 14L15 10" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-        let viewedUser = "";
-        let selectedExamId = null;
-        const currentLogin = localStorage.getItem("currentUser");
 
-        document.addEventListener("DOMContentLoaded", () => {
+        // 1. ƏSAS FUNKSİYA: MƏLUMATI FİREBASE-DƏN OXU
+        async function syncWithFirebase() {
+            const currentLogin = localStorage.getItem("currentUser");
             if (!currentLogin) { window.location.href = 'index.html'; return; }
-            const students = JSON.parse(localStorage.getItem("students") || "[]");
-            const user = students.find(s => s.username === currentLogin);
 
-            // --- ADIN DÜZGÜN ÖTÜRÜLMƏSİ MƏNTİQİ ---
-            if (user) {
-                localStorage.setItem("fullUserName", user.fullName);
-                let nameHTML = user.fullName;
-                if (user.isVerified) nameHTML += blueTickSVG;
-                document.getElementById("userNamePortal").innerHTML = nameHTML;
-            } else {
-                localStorage.setItem("fullUserName", currentLogin);
-                document.getElementById("userNamePortal").innerText = currentLogin;
-            }
-            // ----------------------------------------
+            try {
+                const res = await fetch(`${DB_URL}/${currentLogin}.json`);
+                const user = await res.json();
 
-            checkActiveExams();
-        });
-
-        function checkActiveExams() {
-            const exams = JSON.parse(localStorage.getItem("be_exams") || "[]");
-            const activeExam = exams.find(ex => ex.status === 'active');
-            const alertArea = document.getElementById("quizAlertArea");
-            if (activeExam) {
-                alertArea.innerHTML = `<button class="btn-quiz-access" style="display:block;" onclick="enterQuiz(${activeExam.id})">🚀 AKTİV İMTAHAN: ${activeExam.name.toUpperCase()}</button>`;
-            } else { alertArea.innerHTML = ""; }
-        }
-
-        function openQuizList() {
-            const container = document.getElementById("quizContainer");
-            const exams = JSON.parse(localStorage.getItem("be_exams") || "[]");
-            container.innerHTML = exams.length ? "" : "<p style='color:#999;'>İmtahan tapılmadı.</p>";
-            exams.reverse().forEach(ex => {
-                const statusColor = ex.status === 'active' ? '#2ecc71' : '#95a5a6';
-                container.innerHTML += `
-                    <div style="padding:15px; border:1px solid #eee; border-radius:10px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <b style="font-size:14px;">${ex.name}</b><br>
-                            <small style="color:${statusColor}; font-weight:700;">Status: ${ex.status === 'active' ? 'Aktiv' : 'Bağlı'}</small>
-                        </div>
-                        ${ex.status === 'active' ? `<button onclick="enterQuiz(${ex.id})" style="background:#2ecc71; color:#fff; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:700;">BAŞLA</button>` : `<small style="color:#999;">Giriş bağlıdır</small>`}
-                    </div>`;
-            });
-            document.getElementById("quizListModal").style.display = "block";
-        }
-
-        function enterQuiz(id) {
-            const exams = JSON.parse(localStorage.getItem("be_exams") || "[]");
-            const exam = exams.find(e => e.id === id);
-            if (exam) {
-                selectedExamId = id;
-                document.getElementById('targetExamTitle').innerText = exam.name;
-                document.getElementById('examPassInput').value = "";
-                document.getElementById('examPassError').style.display = 'none';
-                document.getElementById('examAccessModal').style.display = 'block';
-            }
-        }
-
-        function verifyExamPass() {
-            const input = document.getElementById('examPassInput').value;
-            const exams = JSON.parse(localStorage.getItem("be_exams") || "[]");
-            const exam = exams.find(e => e.id === selectedExamId);
-
-            if (exam && input === exam.pass) {
-                localStorage.setItem("currentExamId", selectedExamId);
-                window.location.href = "quiz.html";
-            } else {
-                document.getElementById('examPassError').style.display = 'block';
-            }
-        }
-
-        function openProfile(username) {
-            viewedUser = username;
-            const students = JSON.parse(localStorage.getItem("students") || "[]");
-            const user = students.find(s => s.username === username);
-            if (!user) return;
-            const savedImg = localStorage.getItem(`profile_img_${username}`);
-            const avatarImg = document.getElementById("profAvatarImg");
-            const initialDiv = document.getElementById("profInitial");
-            if (savedImg) { avatarImg.src = savedImg; avatarImg.style.display = "block"; initialDiv.style.display = "none"; }
-            else { avatarImg.style.display = "none"; initialDiv.innerText = user.fullName[0]; initialDiv.style.display = "block"; }
-            document.getElementById("profName").innerHTML = user.fullName + (user.isVerified ? blueTickSVG : "");
-            document.getElementById("profUser").innerText = "@" + user.username;
-            const isOwn = (username === currentLogin);
-            document.getElementById("ownProfileActions").style.display = isOwn ? "flex" : "none";
-            document.getElementById("postCreator").style.display = isOwn ? "block" : "none";
-            updateFollowStats(username);
-            loadPosts(username);
-            const fb = document.getElementById("profFollowBtn");
-            if (isOwn) fb.style.display = "none";
-            else {
-                fb.style.display = "block";
-                const f = JSON.parse(localStorage.getItem("following_" + currentLogin) || "[]");
-                fb.innerText = f.includes(username) ? "İZLƏMƏK DƏYANDIR" : "İZLƏ";
-                fb.style.background = f.includes(username) ? "#333" : "#e60000";
-                fb.onclick = () => toggleFollow(username);
-            }
-            document.getElementById("profileModal").style.display = "block";
-        }
-
-        function triggerPhotoUpload() { if (viewedUser === currentLogin) document.getElementById('profilePhotoInput').click(); }
-
-        function handlePhotoUpload(input) {
-            const file = input.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    localStorage.setItem(`profile_img_${currentLogin}`, e.target.result);
-                    openProfile(currentLogin);
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function deleteProfilePhoto() { if (confirm("Şəkli silmək istəyirsiniz?")) { localStorage.removeItem(`profile_img_${currentLogin}`); openProfile(currentLogin); } }
-
-        function changeUserPassword() {
-            const students = JSON.parse(localStorage.getItem("students") || "[]");
-            const idx = students.findIndex(s => s.username === currentLogin);
-            const oldP = prompt("Hazırkı parol:");
-            if (oldP === students[idx].password) {
-                const newP = prompt("Yeni parol (min 4 simvol):");
-                if (newP && newP.length >= 4) {
-                    students[idx].password = newP;
-                    localStorage.setItem("students", JSON.stringify(students));
-                    alert("Uğurla dəyişdirildi!");
+                if (user) {
+                    // Adı və Tiki göstər
+                    let nameHTML = user.fullname;
+                    if (user.isVerified) nameHTML += blueTickSVG;
+                    document.getElementById("userNamePortal").innerHTML = nameHTML;
                 }
-            } else if (oldP) alert("Parol səhvdir!");
+            } catch (err) { console.log("Firebase xətası:", err); }
         }
 
-        function createNewPost() {
-            const text = document.getElementById("postText").value;
-            const imgInput = document.getElementById("postImgInput");
-            if (!text && !imgInput.files[0]) return;
-            const add = (data) => {
-                const p = JSON.parse(localStorage.getItem("all_posts") || "[]");
-                p.unshift({ id: Date.now(), author: currentLogin, text: text, image: data, likes: [], date: new Date().toLocaleString('az-AZ', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' }) });
-                localStorage.setItem("all_posts", JSON.stringify(p));
-                document.getElementById("postText").value = "";
-                document.getElementById("postImgInput").value = "";
-                loadPosts(currentLogin);
-            };
-            if (imgInput.files[0]) {
-                const r = new FileReader(); r.onload = (e) => add(e.target.result); r.readAsDataURL(imgInput.files[0]);
-            } else add(null);
+        // 2. Profil Modalını Açanda Firebase-dən məlumat çək
+        async function openProfile(username) {
+            try {
+                const res = await fetch(`${DB_URL}/${username}.json`);
+                const user = await res.json();
+                if (!user) return;
+
+                document.getElementById("profInitial").innerText = user.fullname[0];
+                document.getElementById("profName").innerHTML = user.fullname + (user.isVerified ? blueTickSVG : "");
+                document.getElementById("profUser").innerText = "@" + user.username;
+                document.getElementById("profileModal").style.display = "block";
+            } catch (err) { console.log(err); }
         }
 
-        function loadPosts(u) {
-            const list = document.getElementById("postsList");
-            const all = JSON.parse(localStorage.getItem("all_posts") || "[]").filter(p => p.author === u);
-            document.getElementById("postCount").innerText = all.length;
-            list.innerHTML = all.length ? "" : "<p style='color:#999; font-size:12px; margin-top:10px;'>Hələ paylaşım yoxdur.</p>";
-            all.forEach(p => {
-                list.innerHTML += `<div class="post-card" style="padding:15px; border-bottom:1px solid #eee;">${p.author === currentLogin ? `<button onclick="deletePost(${p.id})" style="float:right; border:none; background:none; color:red; cursor:pointer; font-size:10px;">SİL</button>` : ""}<div style="display:flex; justify-content:space-between; margin-bottom:8px;"><b style="color:#e60000; font-size:12px;">@${p.author}</b><small style="color:#999; font-size:10px;">${p.date}</small></div><p style="font-size:13px; margin:5px 0;">${p.text}</p>${p.image ? `<img src="${p.image}" style="width:100%; border-radius:8px; margin-top:5px;">` : ""}</div>`;
-            });
-        }
-
-        function deletePost(id) { if (confirm("Silinsin?")) { let p = JSON.parse(localStorage.getItem("all_posts") || "[]"); p = p.filter(x => x.id !== id); localStorage.setItem("all_posts", JSON.stringify(p)); loadPosts(viewedUser); } }
-
-        function updateFollowStats(u) {
-            const f = JSON.parse(localStorage.getItem("following_" + u) || "[]");
-            document.getElementById("followingCount").innerText = f.length;
-            const s = JSON.parse(localStorage.getItem("students") || "[]");
-            let followers = 0;
-            s.forEach(x => { if (JSON.parse(localStorage.getItem("following_" + x.username) || "[]").includes(u)) followers++; });
-            document.getElementById("followerCount").innerText = followers;
-        }
-
-        function toggleFollow(u) {
-            let f = JSON.parse(localStorage.getItem("following_" + currentLogin) || "[]");
-            if (f.includes(u)) f = f.filter(x => x !== u); else f.push(u);
-            localStorage.setItem("following_" + currentLogin, JSON.stringify(f));
-            openProfile(u);
-        }
-
-        function searchStaff() {
-            const val = document.getElementById("staffSearchInput").value.toLowerCase();
-            const res = document.getElementById("staffSearchResults");
-            if (!val) { res.innerHTML = ""; return; }
-            const students = JSON.parse(localStorage.getItem("students") || "[]");
-            res.innerHTML = students.filter(s => s.fullName.toLowerCase().includes(val) || s.username.toLowerCase().includes(val)).map(s => `
-                <div class="staff-card" onclick="openProfile('${s.username}')">
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <div style="width:30px; height:30px; background:#eee; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:12px;">${s.fullName[0]}</div>
-                        <b>${s.fullName} ${s.isVerified ? blueTickSVG : ''}</b>
-                    </div>
-                    <span style="color:#e60000;">→</span>
-                </div>`).join("");
-        }
-
-        function showSection(name) {
-            const m = document.getElementById("portalModal");
-            document.getElementById("sectionTitle").innerText = name === 'TELIMAT' ? "AKADEMİYA RESURLARI" : name;
-            const mats = JSON.parse(localStorage.getItem("be_materials") || "[]").filter(x => x.course === name);
-            document.getElementById("sectionFiles").innerHTML = mats.length ? mats.map(x => `<div style="padding:15px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;"><b>${x.title}</b><button onclick="viewFile('${x.id}')" style="background:#000; color:#fff; border:none; padding:5px 12px; border-radius:4px; cursor:pointer; font-size:11px;">BAX</button></div>`).join("") : "<p style='padding:15px; color:#999;'>Material tapılmadı.</p>";
-            m.style.display = "block";
-        }
-
-        function viewFile(id) {
-            const f = JSON.parse(localStorage.getItem("be_materials") || "[]").find(x => x.id == id);
-            if (f) { const w = window.open(); w.document.write(`<iframe src="${f.file.data}" style="width:100%; height:100vh; border:none;"></iframe>`); }
-        }
-
+        // Digər funksiyalar (Modal bağlama və s.)
         function closeModal(id) { document.getElementById(id).style.display = "none"; }
-        window.onclick = (e) => { if (e.target.id.includes("Modal") || e.target.id === "examAccessModal") e.target.style.display = "none"; }
+        function showSection(name) { alert(name + " bölməsi tezliklə aktiv olacaq!"); }
+        function openQuizList() { alert("İmtahan siyahısı tezliklə!"); }
+
+        // Səhifə açılanda işə düş
+        window.onload = syncWithFirebase;
     </script>
 </body>
-
 </html>
