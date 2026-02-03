@@ -22,9 +22,17 @@
         .btn { padding: 12px 24px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; width: 100%; margin-top: 10px; }
         .btn-add { background: var(--primary); color: white; }
         
-        /* Silmə düyməsi və siyahı stili */
-        .manage-item { display: flex; justify-content: space-between; align-items: center; background: #f9f9f9; padding: 10px 15px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #eee; }
-        .btn-del { background: #ff4d4d; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        /* Yenilənmiş Siyahı Stili */
+        .manage-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: #f9f9f9; padding: 12px 15px; border-radius: 10px; 
+            margin-bottom: 10px; border: 1px solid #eee; 
+        }
+        .info-box { display: flex; flex-direction: column; gap: 2px; }
+        .course-badge { background: #333; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; width: fit-content; text-transform: uppercase; }
+        .title-text { font-size: 14px; font-weight: 600; color: #222; }
+        .btn-del { background: #ff4d4d; color: white; border: none; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-weight: 700; transition: 0.2s; }
+        .btn-del:hover { background: #d63031; }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -44,7 +52,7 @@
         </div>
 
         <div id="materials" class="section active">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 25px;">
                 
                 <div>
                     <label for="universalPicker" class="upload-area">
@@ -54,10 +62,10 @@
                     </label>
 
                     <div style="background: #fff; padding: 20px; border-radius: 15px; border: 1px solid #eee; margin-top:15px;">
-                        <label>Materialın Başlığı:</label>
+                        <label style="font-size:13px; font-weight:700;">Materialın Başlığı:</label>
                         <input type="text" id="mTitle" placeholder="Məsələn: Kompyuterin Əsasları">
                         
-                        <label>Bölməni Seçin:</label>
+                        <label style="font-size:13px; font-weight:700;">Bölməni Seçin:</label>
                         <select id="targetCourse">
                             <option value="IT">💻 IT</option>
                             <option value="KEA">☕ KEA</option>
@@ -68,8 +76,8 @@
                     </div>
                 </div>
 
-                <div style="background: #fff; padding: 20px; border-radius: 15px; border: 1px solid #eee;">
-                    <h3 style="margin-top:0; font-size: 16px;">Sistemdəki Materiallar:</h3>
+                <div style="background: #fff; padding: 20px; border-radius: 15px; border: 1px solid #eee; max-height: 500px; overflow-y: auto;">
+                    <h3 style="margin-top:0; font-size: 16px; border-bottom: 2px solid var(--primary); padding-bottom: 10px;">Aktiv Materiallar:</h3>
                     <div id="materialsList">Yüklənir...</div>
                 </div>
             </div>
@@ -111,23 +119,30 @@
                 if (data) {
                     for (let course in data) {
                         if (data[course]) {
+                            // Firebase-dən gələn datadan başlığı çıxarmaq (<h2> içindəki mətni tutur)
+                            const match = data[course].match(/<h2>(.*?)<\/h2>/);
+                            const displayTitle = match ? match[1] : "Başlıqsız Material";
+
                             listDiv.innerHTML += `
                                 <div class="manage-item">
-                                    <span><strong>${course}</strong> bölməsi</span>
+                                    <div class="info-box">
+                                        <span class="course-badge">${course}</span>
+                                        <span class="title-text">${displayTitle}</span>
+                                    </div>
                                     <button class="btn-del" onclick="deleteMaterial('${course}')">SİL</button>
                                 </div>`;
                         }
                     }
-                } else { listDiv.innerHTML = "Material yoxdur."; }
-            } catch (err) { listDiv.innerHTML = "Xəta!"; }
+                } else { listDiv.innerHTML = "<p style='color:#999;'>Heç bir material tapılmadı.</p>"; }
+            } catch (err) { listDiv.innerHTML = "Məlumatı çəkmək olmadı."; }
         }
 
         async function deleteMaterial(course) {
-            if (!confirm(course + " bölməsini silmək istəyirsiniz?")) return;
+            if (!confirm(course + " bölməsindəki materialı SİLMƏK istədiyinizdən əminsiniz?")) return;
             try {
                 await fetch(`${FIREBASE_DB}/${course}.json`, { method: 'DELETE' });
                 fetchMaterials();
-            } catch (err) { alert("Silinmədi!"); }
+            } catch (err) { alert("Xəta!"); }
         }
 
         async function pushToDatabase() {
@@ -136,7 +151,7 @@
             const btn = document.getElementById('uploadBtn');
             const status = document.getElementById('statusMsg');
 
-            if (!hiddenData || !title) return alert("Başlıq və fayl mütləqdir!");
+            if (!hiddenData || !title) return alert("Həm başlıq daxil edilməli, həm də fayl seçilməlidir!");
 
             btn.innerText = "YÜKLƏNİR...";
             btn.disabled = true;
@@ -149,12 +164,12 @@
                     body: JSON.stringify(combinedContent)
                 });
                 status.style.color = "green";
-                status.innerText = "Uğurla köçürüldü! ✅";
+                status.innerText = "Sistem yeniləndi! ✅";
                 document.getElementById('mTitle').value = "";
                 hiddenData = "";
                 document.getElementById('fileNameDisplay').innerText = "Fayl Seçin";
                 fetchMaterials();
-            } catch (err) { status.innerText = "Xəta!"; }
+            } catch (err) { status.innerText = "Xəta baş verdi!"; }
             finally {
                 btn.innerText = "SİSTEMƏ KÖÇÜR";
                 btn.disabled = false;
