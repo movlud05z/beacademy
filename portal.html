@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="az">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +12,7 @@
         .portal-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 15px; text-align: center; transition: 0.3s; cursor: pointer; position: relative; overflow: hidden; }
         .portal-card:hover { background: rgba(230, 0, 0, 0.1); transform: translateY(-5px); border-color: #e60000; }
         .login-btn { background: #e60000; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 15px; transition: 0.3s; }
-        .login-btn:hover { opacity: 0.9; transform: scale(1.02); }
+        
         #structureModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 10000; backdrop-filter: blur(10px); overflow-y: auto; padding: 20px; }
         .org-container { max-width: 1000px; margin: 50px auto; text-align: center; color: #fff; }
         .org-node { background: #fff; color: #000; padding: 15px; border-radius: 10px; display: inline-block; min-width: 180px; border-top: 5px solid #e60000; box-shadow: 0 5px 15px rgba(230, 0, 0, 0.3); margin: 10px; }
@@ -23,38 +22,28 @@
         .line-h-container { display: flex; justify-content: center; align-items: center; }
         .line-h { height: 2px; background: #e60000; flex-grow: 1; max-width: 600px; }
         .architect-node { border-top: 5px solid #0095F6 !important; box-shadow: 0 5px 15px rgba(0, 149, 246, 0.4); margin-top: 40px; }
-        #portalModal, #profileModal, #followListModal, #examAccessModal, #quizListModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 9999; backdrop-filter: blur(8px); overflow-y: auto; }
-        .modal-container { background: #fff; max-width: 500px; margin: 50px auto; padding: 30px; border-radius: 15px; position: relative; border-top: 6px solid #e60000; text-align: center; color: #333; }
-        .close-btn { position: absolute; right: 20px; top: 15px; font-size: 30px; cursor: pointer; color: #000; z-index: 10; }
-        .profile-avatar-wrapper { width: 110px; height: 110px; margin: 0 auto 15px; position: relative; cursor: pointer; border-radius: 50%; border: 3px solid #e60000; overflow: hidden; background: #f4f4f4; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
-        .profile-avatar-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-        .profile-actions { margin: 15px 0; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-        .btn-small { padding: 6px 12px; font-size: 11px; font-weight: 700; border-radius: 4px; cursor: pointer; border: 1px solid #ddd; background: #fff; transition: 0.2s; }
-        .stats-row { display: flex; justify-content: center; gap: 30px; margin: 20px 0; border-top: 1px solid #eee; padding-top: 15px; }
-        .stat-item { text-align: center; }
-        .stat-item b { display: block; font-size: 20px; color: #000; }
-        .stat-item span { font-size: 12px; color: #888; text-transform: uppercase; }
+
+        #profileModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 9999; backdrop-filter: blur(8px); }
+        .modal-container { background: #fff; max-width: 450px; margin: 80px auto; padding: 30px; border-radius: 15px; position: relative; text-align: center; color: #333; }
+        .close-btn { position: absolute; right: 20px; top: 15px; font-size: 30px; cursor: pointer; color: #000; }
+        
         .search-section { margin-top: 50px; background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 15px; }
-        .search-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-top: 20px; }
-        .staff-card { background: #fff; padding: 15px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; color: #333; transition: 0.2s; }
-        .staff-card:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        .verified-badge { width: 18px; height: 18px; vertical-align: middle; margin-left: 5px; }
+        .staff-card { background: #fff; padding: 12px; border-radius: 8px; margin-top: 10px; color: #333; display: flex; justify-content: space-between; cursor: pointer; }
     </style>
 </head>
-
 <body class="dynamic-body">
 
     <header style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 20px;">
         <div class="logo"><span class="be">BE</span><span class="academy">Academy</span></div>
         <button onclick="document.getElementById('structureModal').style.display='block'" style="background: transparent; border: 2px solid #fff; color: #fff; padding: 8px 20px; border-radius: 30px; font-weight: 800; cursor: pointer; font-size: 11px; letter-spacing: 1px;">AKADEMİYA STRUKTURU</button>
         <div style="color: #fff; display: flex; align-items: center; gap: 20px;">
-            <span style="cursor: pointer;" onclick="openProfile(localStorage.getItem('currentUser'))">Xoş gəldin, <b id="userNamePortal" style="color: #e60000; text-decoration: underline;">...</b></span>
-            <a href="index.html" onclick="localStorage.removeItem('currentUser');" style="color: #fff; font-weight: 700; text-decoration: none; background: #e60000; padding: 6px 15px; border-radius: 4px; font-size: 13px;">ÇIXIŞ</a>
+            <span style="cursor: pointer;" onclick="openMyProfile()">Xoş gəldin, <b id="userNamePortal" style="color: #e60000; text-decoration: underline;">...</b></span>
+            <a href="index.html" onclick="localStorage.removeItem('currentUser')" style="color: #fff; font-weight: 700; text-decoration: none; background: #e60000; padding: 6px 15px; border-radius: 4px; font-size: 13px;">ÇIXIŞ</a>
         </div>
     </header>
 
     <div id="structureModal">
-        <span class="close-btn" onclick="document.getElementById('structureModal').style.display='none'" style="color: #fff; top: 30px; right: 40px;">&times;</span>
+        <span class="close-btn" onclick="document.getElementById('structureModal').style.display='none'" style="color: #fff;">&times;</span>
         <div class="org-container">
             <h2 style="margin-bottom: 40px; letter-spacing: 2px;">BE ACADEMY İDARƏ HEYƏTİ</h2>
             <div class="org-node" style="min-width: 250px;"><span>BE Academy Rəhbəri</span><b>Elçin Mahmudov</b></div>
@@ -84,111 +73,55 @@
 
     <div class="search-section">
         <h2 style="color: #fff; margin-bottom: 15px; font-size: 16px; opacity: 0.8;">🔍 ƏMƏKDAŞLAR</h2>
-        <input type="text" id="staffSearchInput" placeholder="Ad və ya Login yaz..." oninput="searchStaff()" style="width:100%; max-width:400px; padding:12px; border-radius:5px; border:none; outline:none; background: rgba(255,255,255,0.1); color: #fff;">
-        <div id="staffSearchResults" class="search-results"></div>
+        <input type="text" id="staffSearchInput" oninput="searchStaff()" placeholder="Ad yaz..." style="width:100%; max-width:400px; padding:12px; border-radius:5px; border:none; background: rgba(255,255,255,0.1); color: #fff;">
+        <div id="staffSearchResults"></div>
     </div>
 
     <div id="profileModal">
         <div class="modal-container">
             <span class="close-btn" onclick="document.getElementById('profileModal').style.display='none'">&times;</span>
-            <div class="profile-avatar-wrapper" onclick="triggerPhotoUpload()">
-                <img id="profAvatarImg" src="" style="display:none;">
-                <div id="profInitial" style="font-size:40px; color:#e60000; font-weight:800;"></div>
-            </div>
-            <div id="ownProfileActions" class="profile-actions" style="display:none;">
-                <button class="btn-small" onclick="triggerPhotoUpload()">Şəkli Yenilə</button>
-                <button class="btn-small" onclick="deleteProfilePhoto()" style="color:red;">Şəkli Sil</button>
-            </div>
+            <div id="profInit" style="width:80px; height:80px; background:#f0f0f0; border-radius:50%; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:800; color:#e60000;"></div>
             <h2 id="profName" style="margin:0;"></h2>
-            <p id="profUser" style="color:#e60000; font-weight:700; margin-bottom:10px;"></p>
-            <div class="stats-row">
-                <div class="stat-item"><b id="postCount">0</b><span>Post</span></div>
-                <div class="stat-item"><b id="followerCount">0</b><span>İzləyici</span></div>
-                <div class="stat-item"><b id="followingCount">0</b><span>İzlənilən</span></div>
-            </div>
-            <button id="profFollowBtn" class="login-btn" onclick="toggleFollow()" style="display:none;">İZLƏ</button>
-            <div id="postsList" style="text-align: left; margin-top: 20px;"></div>
+            <p id="profUser" style="color:#e60000; font-weight:bold;"></p>
         </div>
     </div>
 
     <script>
         const DB_URL = "https://beacademy-c8316-default-rtdb.firebaseio.com/users";
-        const currentLogin = localStorage.getItem("currentUser");
+        const currentLog = localStorage.getItem("currentUser");
 
-        // 1. Səhifə açılan kimi istifadəçini yoxla
-        window.onload = async function() {
-            if (!currentLogin) { 
-                window.location.href = 'index.html'; 
-                return;
-            }
-            const res = await fetch(`${DB_URL}/${currentLogin}.json`);
+        window.onload = async () => {
+            if(!currentLog) return;
+            const res = await fetch(`${DB_URL}/${currentLog}.json`);
             const u = await res.json();
-            if(u) {
-                document.getElementById("userNamePortal").innerText = u.fullname;
-            }
+            if(u) document.getElementById("userNamePortal").innerText = u.fullname;
         };
 
-        // 2. Axtarış funksiyası (Hərf yazdıqca işləyir)
-        async function searchStaff() {
-            const val = document.getElementById("staffSearchInput").value.trim().toLowerCase();
-            const resDiv = document.getElementById("staffSearchResults");
-            if (val.length < 2) { resDiv.innerHTML = ""; return; }
+        async function openMyProfile(user) {
+            const target = user || currentLog;
+            const res = await fetch(`${DB_URL}/${target}.json`);
+            const u = await res.json();
+            if(u) {
+                document.getElementById("profileModal").style.display = "block";
+                document.getElementById("profName").innerText = u.fullname;
+                document.getElementById("profUser").innerText = "@" + u.username;
+                document.getElementById("profInit").innerText = u.fullname[0];
+            }
+        }
 
+        async function searchStaff() {
+            const val = document.getElementById("staffSearchInput").value.toLowerCase();
+            const resDiv = document.getElementById("staffSearchResults");
+            if(val.length < 2) { resDiv.innerHTML = ""; return; }
+            
             const res = await fetch(`${DB_URL}.json`);
             const users = await res.json();
             resDiv.innerHTML = "";
-
             Object.values(users).forEach(u => {
-                if(u.fullname && u.fullname.toLowerCase().includes(val)) {
-                    resDiv.innerHTML += `
-                        <div class="staff-card" onclick="openProfile('${u.username}')">
-                            <b>${u.fullname}</b>
-                            <span style="color:#e60000; font-size:12px;">@${u.username} →</span>
-                        </div>`;
+                if(u.fullname.toLowerCase().includes(val)) {
+                    resDiv.innerHTML += `<div class="staff-card" onclick="openMyProfile('${u.username}')"><b>${u.fullname}</b> <span>@${u.username}</span></div>`;
                 }
             });
-        }
-
-        // 3. Profil açma funksiyası
-        async function openProfile(user) {
-            const res = await fetch(`${DB_URL}/${user}.json`);
-            const u = await res.json();
-            if(!u) return;
-
-            document.getElementById("profileModal").style.display = "block";
-            document.getElementById("profName").innerText = u.fullname;
-            document.getElementById("profUser").innerText = "@" + u.username;
-            
-            const img = document.getElementById("profAvatarImg");
-            const init = document.getElementById("profInitial");
-            if(u.img) {
-                img.src = u.img; img.style.display="block"; init.style.display="none";
-            } else {
-                img.style.display="none"; init.innerText = u.fullname[0]; init.style.display="block";
-            }
-
-            const isOwn = (user === currentLogin);
-            document.getElementById("ownProfileActions").style.display = isOwn ? "flex" : "none";
-            document.getElementById("profFollowBtn").style.display = isOwn ? "none" : "block";
-        }
-
-        // 4. Şəkil yükləmə
-        function triggerPhotoUpload() {
-            if(document.getElementById("profUser").innerText.replace("@","") !== currentLogin) return;
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.onchange = e => {
-                const reader = new FileReader();
-                reader.onload = async (ev) => {
-                    await fetch(`${DB_URL}/${currentLogin}.json`, { 
-                        method: 'PATCH', 
-                        body: JSON.stringify({ img: ev.target.result }) 
-                    });
-                    location.reload();
-                };
-                reader.readAsDataURL(e.target.files[0]);
-            };
-            input.click();
         }
     </script>
 </body>
