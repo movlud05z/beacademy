@@ -6,69 +6,57 @@
     <title>BEAcademy | Tədris Portalı</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
+        /* Sənin orijinal dizayn rənglərin */
         body { background: #1a1a1a; font-family: 'Poppins', sans-serif; margin: 0; padding: 20px; color: #fff; }
         header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid #333; }
-        .logo { font-size: 22px; font-weight: 800; }
-        .be { color: #fff; } .academy { color: #e60000; }
-
-        /* Search Section */
-        .search-container { margin: 30px 0; background: #252525; padding: 20px; border-radius: 12px; border: 1px solid #444; }
-        .search-input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #e60000; background: #1a1a1a; color: white; box-sizing: border-box; }
-        #staffSearchResults { margin-top: 15px; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
-        .staff-card { background: #fff; color: #333; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s; }
-        .staff-card:hover { transform: scale(1.02); }
-
-        /* Grid */
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 40px; }
-        .portal-card { background: #252525; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #333; }
-        .login-btn { background: #e60000; color: white; border: none; padding: 10px; width: 100%; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
-        .follow-btn { background: #0095F6; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
-        .follow-btn.unfollow { background: #555; }
-
-        /* Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; overflow-y: auto; }
-        .modal-content { background: white; color: #333; width: 90%; max-width: 450px; margin: 50px auto; padding: 25px; border-radius: 15px; position: relative; text-align: center; }
-        .close { position: absolute; right: 20px; top: 10px; font-size: 28px; cursor: pointer; }
-        .verified-badge { width: 18px; height: 18px; margin-left: 5px; vertical-align: middle; }
         
-        .stats { display: flex; justify-content: space-around; margin: 20px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 10px 0; }
-        .stat-val { font-weight: 800; color: #e60000; display: block; }
+        /* Axtarış Bölməsi - Mütləq görünən */
+        .search-area { margin: 30px 0; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; }
+        .search-input { width: 100%; padding: 15px; border-radius: 8px; border: 2px solid #e60000; background: #222; color: #fff; font-size: 16px; }
+        
+        /* Əməkdaş kartları */
+        .staff-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; margin-top: 20px; }
+        .staff-card { background: #fff; color: #333; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Düymələr */
+        .btn-follow { background: #0095F6; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-weight: 600; }
+        .btn-following { background: #555; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; }
+        .verified-badge { width: 18px; height: 18px; vertical-align: middle; margin-left: 5px; }
+
+        /* Modal dizaynı */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; }
+        .modal-content { background: #fff; color: #333; width: 90%; max-width: 500px; margin: 50px auto; padding: 30px; border-radius: 20px; text-align: center; position: relative; }
+        .close { position: absolute; right: 20px; top: 15px; font-size: 25px; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo"><span class="be">BE</span><span class="academy">Academy</span></div>
-        <div style="cursor: pointer;" onclick="openProfile(localStorage.getItem('currentUser'))">
-            Xoş gəldin, <b id="userNamePortal" style="color: #e60000; text-decoration: underline;">...</b>
+        <div style="font-size: 24px; font-weight: 800;"><span style="color:white">BE</span><span style="color:#e60000">Academy</span></div>
+        <div onclick="openProfile(currentLogin)" style="cursor:pointer">
+            Xoş gəldin, <b id="headerName" style="color:#e60000">...</b>
         </div>
     </header>
 
-    <div class="search-container">
-        <h3>🔍 Əməkdaş Axtar və İzlə</h3>
-        <input type="text" class="search-input" id="staffSearchInput" placeholder="Ad yazın..." oninput="searchStaff()">
-        <div id="staffSearchResults"></div>
+    <div class="search-area">
+        <h2 style="margin-bottom:15px">🔍 Əməkdaşları Tap və İzlə</h2>
+        <input type="text" id="searchInput" class="search-input" placeholder="Ad və ya istifadəçi adı ilə axtar..." oninput="handleSearch()">
+        <div id="searchResults" class="staff-list"></div>
     </div>
 
     <div id="profileModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
-            <div id="profAvatar" style="width:80px; height:80px; background:#f0f0f0; color:#e60000; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto; font-size:35px; font-weight:bold; border: 3px solid #e60000;"></div>
-            <h2 id="profNameDisplay" style="margin:15px 0 5px;"></h2>
-            <p id="profUsernameDisplay" style="color:#666; margin-bottom: 15px;"></p>
-
-            <div class="stats">
-                <div><span class="stat-val" id="countPosts">0</span> Post</div>
-                <div><span class="stat-val" id="countFollowers">0</span> İzləyici</div>
-                <div><span class="stat-val" id="countFollowing">0</span> İzlənilən</div>
+            <div id="avatar" style="width:80px; height:80px; background:#e60000; border-radius:50%; margin:0 auto; display:flex; align-items:center; justify-content:center; color:#fff; font-size:30px; font-weight:bold;"></div>
+            <h2 id="pName"></h2>
+            <p id="pUser" style="color:#e60000"></p>
+            
+            <div style="display:flex; justify-content:space-around; margin:20px 0; border-top:1px solid #eee; padding-top:15px">
+                <div><b id="countFollowers">0</b><br>İzləyici</div>
+                <div><b id="countFollowing">0</b><br>İzlənilən</div>
             </div>
 
-            <div id="actionButtons"></div>
-
-            <div id="userPosts" style="margin-top:20px; text-align: left;">
-                <h4 style="border-bottom: 1px solid #eee; padding-bottom: 5px;">Paylaşımlar</h4>
-                <div id="postsContainer" style="max-height: 200px; overflow-y: auto;"></div>
-            </div>
+            <div id="profileAction"></div>
         </div>
     </div>
 
@@ -82,78 +70,70 @@
             if(!currentLogin) return;
             const res = await fetch(`${DB_URL}/${currentLogin}.json`);
             const user = await res.json();
-            if(user) document.getElementById("userNamePortal").innerHTML = user.fullname + (user.isVerified ? tickSVG : "");
+            if(user) document.getElementById("headerName").innerHTML = user.fullname + (user.isVerified ? tickSVG : "");
         }
 
-        async function searchStaff() {
-            const input = document.getElementById("staffSearchInput").value.toLowerCase();
-            const results = document.getElementById("staffSearchResults");
-            if(input.length < 1) { results.innerHTML = ""; return; }
+        async function handleSearch() {
+            const query = document.getElementById("searchInput").value.toLowerCase();
+            const resultsDiv = document.getElementById("searchResults");
+            if(query.length < 1) { resultsDiv.innerHTML = ""; return; }
 
             const res = await fetch(`${DB_URL}.json`);
-            const data = await res.json();
+            const users = await res.json();
             
-            results.innerHTML = "";
-            for(let key in data) {
-                if(data[key].fullname.toLowerCase().includes(input)) {
-                    results.innerHTML += `
-                        <div class="staff-card" onclick="openProfile('${key}')">
-                            <span><b>${data[key].fullname}</b> ${data[key].isVerified ? tickSVG : ""}</span>
-                            <span style="font-size: 12px; color: #e60000;">PROFİLƏ BAX</span>
+            let html = "";
+            let following = JSON.parse(localStorage.getItem("following_" + currentLogin) || "[]");
+
+            for(let key in users) {
+                if(users[key].fullname.toLowerCase().includes(query) && key !== currentLogin) {
+                    const isFollowing = following.includes(key);
+                    html += `
+                        <div class="staff-card">
+                            <div onclick="openProfile('${key}')" style="cursor:pointer">
+                                <b>${users[key].fullname}</b> ${users[key].isVerified ? tickSVG : ""}
+                                <br><small>@${users[key].username}</small>
+                            </div>
+                            <button id="btn-${key}" class="${isFollowing ? 'btn-following' : 'btn-follow'}" onclick="toggleFollow('${key}')">
+                                ${isFollowing ? 'İzlənilir' : 'İzlə +'}
+                            </button>
                         </div>`;
                 }
             }
+            resultsDiv.innerHTML = html;
         }
 
-        async function openProfile(userKey) {
-            const res = await fetch(`${DB_URL}/${userKey}.json`);
+        function toggleFollow(userId) {
+            let following = JSON.parse(localStorage.getItem("following_" + currentLogin) || "[]");
+            const btn = document.getElementById("btn-" + userId);
+
+            if(following.includes(userId)) {
+                following = following.filter(id => id !== userId);
+                btn.innerText = "İzlə +";
+                btn.className = "btn-follow";
+            } else {
+                following.push(userId);
+                btn.innerText = "İzlənilir";
+                btn.className = "btn-following";
+            }
+            localStorage.setItem("following_" + currentLogin, JSON.stringify(following));
+        }
+
+        async function openProfile(userId) {
+            const res = await fetch(`${DB_URL}/${userId}.json`);
             const user = await res.json();
             
-            document.getElementById("profNameDisplay").innerHTML = user.fullname + (user.isVerified ? tickSVG : "");
-            document.getElementById("profUsernameDisplay").innerText = "@" + user.username;
-            document.getElementById("profAvatar").innerText = user.fullname[0];
+            document.getElementById("avatar").innerText = user.fullname[0];
+            document.getElementById("pName").innerHTML = user.fullname + (user.isVerified ? tickSVG : "");
+            document.getElementById("pUser").innerText = "@" + user.username;
             
-            // İzləmə məntiqi
-            updateFollowUI(userKey);
-            
+            let following = JSON.parse(localStorage.getItem("following_" + userId) || "[]");
+            document.getElementById("countFollowing").innerText = following.length;
+
             document.getElementById("profileModal").style.display = "block";
         }
 
-        function updateFollowUI(targetUser) {
-            const actionDiv = document.getElementById("actionButtons");
-            if(targetUser === currentLogin) {
-                actionDiv.innerHTML = `<p style="color: #e60000; font-weight: bold;">Bu sənin profilindir</p>`;
-                return;
-            }
-
-            let following = JSON.parse(localStorage.getItem("following_" + currentLogin) || "[]");
-            const isFollowing = following.includes(targetUser);
-
-            actionDiv.innerHTML = `
-                <button class="follow-btn ${isFollowing ? 'unfollow' : ''}" onclick="toggleFollow('${targetUser}')">
-                    ${isFollowing ? 'İzləməni Dayandır' : 'İzlə +'}
-                </button>
-            `;
-            
-            // Statistika simulyasiyası
-            document.getElementById("countFollowing").innerText = following.length;
-            document.getElementById("countFollowers").innerText = Math.floor(Math.random() * 50); // Nümunə üçün
-        }
-
-        function toggleFollow(targetUser) {
-            let following = JSON.parse(localStorage.getItem("following_" + currentLogin) || "[]");
-            
-            if(following.includes(targetUser)) {
-                following = following.filter(id => id !== targetUser);
-            } else {
-                following.push(targetUser);
-            }
-            
-            localStorage.setItem("following_" + currentLogin, JSON.stringify(following));
-            updateFollowUI(targetUser);
-        }
-
         function closeModal() { document.getElementById("profileModal").style.display = "none"; }
+        
         init();
     </script>
 </body>
