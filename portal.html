@@ -6,59 +6,80 @@
     <title>BEAcademy | Tədris Portalı</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- SƏNİN BÜTÜN CSS-İN (Dəyişilmədən) --- */
+        /* --- ORIJINAL FULL CSS --- */
         body.dynamic-body { background: #1a1a1a; font-family: 'Poppins', sans-serif; margin: 0; padding: 40px; color: #fff; }
         .logo { font-size: 24px; font-weight: 800; text-transform: uppercase; }
         .be { color: #fff; } .academy { color: #e60000; }
-        .portal-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 15px; text-align: center; transition: 0.3s; cursor: pointer; position: relative; overflow: hidden; }
+        .portal-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 15px; text-align: center; transition: 0.3s; cursor: pointer; position: relative; }
         .portal-card:hover { background: rgba(230, 0, 0, 0.1); transform: translateY(-5px); border-color: #e60000; }
-        .login-btn { background: #e60000; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 15px; transition: 0.3s; }
+        .login-btn { background: #e60000; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 15px; }
         
-        /* Modallar - Bütün o köhnə dizaynlar */
-        #structureModal, #profileModal, #followListModal, #examAccessModal, #quizListModal { 
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0, 0, 0, 0.9); z-index: 9999; backdrop-filter: blur(8px); overflow-y: auto; 
-        }
-        .modal-container { background: #fff; max-width: 500px; margin: 50px auto; padding: 30px; border-radius: 15px; position: relative; border-top: 6px solid #e60000; text-align: center; color: #333; }
+        /* Modallar */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 10000; backdrop-filter: blur(10px); overflow-y: auto; }
+        .modal-container { background: #fff; max-width: 600px; margin: 40px auto; padding: 30px; border-radius: 15px; position: relative; color: #333; border-top: 6px solid #e60000; text-align: center; }
         .close-btn { position: absolute; right: 20px; top: 15px; font-size: 30px; cursor: pointer; color: #000; }
         
-        /* Axtarış və Digərləri */
-        .staff-card { background: #fff; padding: 15px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; color: #333; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .verified-badge { width: 16px; height: 16px; vertical-align: middle; margin-left: 5px; }
+        /* Profil Şəkli və Inputlar */
+        .profile-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #e60000; margin-bottom: 10px; }
+        .edit-input { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        .verified-badge { width: 18px; height: 18px; vertical-align: middle; margin-left: 5px; }
     </style>
 </head>
 <body class="dynamic-body">
 
     <header style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 20px;">
         <div class="logo"><span class="be">BE</span><span class="academy">Academy</span></div>
-        <button onclick="document.getElementById('structureModal').style.display='block'" style="background: transparent; border: 2px solid #fff; color: #fff; padding: 8px 20px; border-radius: 30px; font-weight: 800; cursor: pointer; font-size: 11px;">AKADEMİYA STRUKTURU</button>
-        <div style="color: #fff; display: flex; align-items: center; gap: 20px;">
-            <span style="cursor: pointer;" onclick="openProfile(localStorage.getItem('currentUser'))">
+        <button onclick="openModal('structureModal')" style="background: transparent; border: 2px solid #fff; color: #fff; padding: 8px 20px; border-radius: 30px; font-weight: 800; cursor: pointer;">AKADEMİYA STRUKTURU</button>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <span style="cursor: pointer;" onclick="openMyProfile()">
                 Xoş gəldin, <b id="userNamePortal" style="color: #e60000; text-decoration: underline;">...</b>
             </span>
-            <a href="index.html" onclick="localStorage.clear();" style="color: #fff; font-weight: 700; text-decoration: none; background: #e60000; padding: 6px 15px; border-radius: 4px; font-size: 13px;">ÇIXIŞ</a>
+            <a href="index.html" onclick="localStorage.clear();" style="color:#fff; background:#e60000; padding:6px 12px; border-radius:4px; text-decoration:none;">ÇIXIŞ</a>
         </div>
     </header>
 
-    <h1 style="color: #fff; margin: 40px 0 20px; font-weight: 800; text-transform: uppercase; font-size: 22px;">Tədris Bölmələri</h1>
+    <h1 style="margin: 40px 0 20px; font-size: 22px;">Tədris Bölmələri</h1>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
-        <div class="portal-card"><h3>İT</h3><button class="login-btn">DAXİL OL</button></div>
-        <div class="portal-card"><h3>KEA</h3><button class="login-btn">DAXİL OL</button></div>
-        <div class="portal-card"><h3>BƏYAZ ƏŞYA</h3><button class="login-btn">DAXİL OL</button></div>
-        <div class="portal-card"><h3>TV</h3><button class="login-btn">DAXİL OL</button></div>
+        <div class="portal-card" onclick="openTrainerFiles('IT')"><h3>İT</h3><button class="login-btn">MATERİALLAR</button></div>
+        <div class="portal-card" onclick="openTrainerFiles('KEA')"><h3>KEA</h3><button class="login-btn">MATERİALLAR</button></div>
+        <div class="portal-card" onclick="openTrainerFiles('BEYAZ')"><h3>BƏYAZ ƏŞYA</h3><button class="login-btn">MATERİALLAR</button></div>
+        <div class="portal-card" onclick="openTrainerFiles('TV')"><h3>TV</h3><button class="login-btn">MATERİALLAR</button></div>
     </div>
 
-    <div style="margin-top: 50px; background: rgba(255,255,255,0.05); padding: 30px; border-radius: 15px;">
-        <h2 style="font-size: 18px; color: #fff; margin-bottom: 15px;">🔍 Əməkdaşları Axtar</h2>
-        <input type="text" id="staffSearchInput" oninput="searchStaff()" placeholder="Ad yazın..." style="width: 100%; max-width: 400px; padding: 12px; border-radius: 8px; border: none;">
-        <div id="staffSearchResults" style="margin-top: 20px;"></div>
-    </div>
-
-    <div id="structureModal">
+    <div id="structureModal" class="modal-overlay">
         <div class="modal-container">
-            <span class="close-btn" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-            <h2>Akademiya Strukturu</h2>
-            <p>Sənin köhnə siyahın burada idi...</p>
+            <span class="close-btn" onclick="closeModal('structureModal')">&times;</span>
+            <h2 style="color:#e60000">Akademiya Strukturu</h2>
+            <div style="text-align: left; line-height: 1.8;">
+                <p><b>Rəhbərlik:</b> Elvin müəllim</p>
+                <p><b>IT Departament:</b> Baş mütəxəssis və komanda</p>
+                <p><b>Tədris:</b> Kuratorlar və Trainerlər</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="myProfileModal" class="modal-overlay">
+        <div class="modal-container">
+            <span class="close-btn" onclick="closeModal('myProfileModal')">&times;</span>
+            <img id="myAvatar" class="profile-img" src="default-avatar.png">
+            <h2 id="myFullnameDisplay"></h2>
+            
+            <div style="margin-top: 20px; text-align: left;">
+                <label>Profil Şəkli (URL):</label>
+                <input type="text" id="editImg" class="edit-input" placeholder="Şəkil linkini bura qoyun">
+                <label>Yeni Parol:</label>
+                <input type="password" id="editPass" class="edit-input" placeholder="Yeni parol">
+                <button class="login-btn" onclick="updateProfile()">YADDA SAXLA</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="fileModal" class="modal-overlay">
+        <div class="modal-container">
+            <span class="close-btn" onclick="closeModal('fileModal')">&times;</span>
+            <h2 id="fileTitle" style="color:#e60000"></h2>
+            <div id="fileList" style="text-align: left; margin-top: 15px;">
+                </div>
         </div>
     </div>
 
@@ -72,28 +93,39 @@
             if(!currentLogin) return;
             const res = await fetch(`${DB_URL}/${currentLogin}.json`);
             const u = await res.json();
-            if(u) document.getElementById("userNamePortal").innerHTML = u.fullname + (u.isVerified ? tickSVG : "");
-        }
-
-        async function searchStaff() {
-            const query = document.getElementById("staffSearchInput").value.toLowerCase();
-            if(!query) { document.getElementById("staffSearchResults").innerHTML = ""; return; }
-            
-            const res = await fetch(`${DB_URL}.json`);
-            const users = await res.json();
-            
-            let html = "";
-            for(let key in users) {
-                if(users[key].fullname.toLowerCase().includes(query)) {
-                    html += `<div class="staff-card" onclick="openProfile('${key}')">
-                                <b>${users[key].fullname} ${users[key].isVerified ? tickSVG : ""}</b>
-                                <span style="color:#e60000; font-weight:bold;">İZLƏ +</span>
-                             </div>`;
-                }
+            if(u) {
+                document.getElementById("userNamePortal").innerHTML = u.fullname + (u.isVerified ? tickSVG : "");
+                document.getElementById("myFullnameDisplay").innerHTML = u.fullname + (u.isVerified ? tickSVG : "");
+                if(u.img) document.getElementById("myAvatar").src = u.img;
             }
-            document.getElementById("staffSearchResults").innerHTML = html;
         }
 
+        function openMyProfile() { openModal('myProfileModal'); }
+
+        async function updateProfile() {
+            const img = document.getElementById("editImg").value;
+            const pass = document.getElementById("editPass").value;
+            let updates = {};
+            if(img) updates.img = img;
+            if(pass) updates.password = pass;
+
+            await fetch(`${DB_URL}/${currentLogin}.patch`, {
+                method: 'PATCH',
+                body: JSON.stringify(updates)
+            });
+            alert("Məlumatlar yeniləndi!");
+            location.reload();
+        }
+
+        function openTrainerFiles(section) {
+            document.getElementById("fileTitle").innerText = section + " Materialları";
+            document.getElementById("fileList").innerHTML = "<p>Yüklənən fayllar tezliklə burada görünəcək...</p>";
+            openModal('fileModal');
+        }
+
+        function openModal(id) { document.getElementById(id).style.display = "block"; }
+        function closeModal(id) { document.getElementById(id).style.display = "none"; }
+        
         window.onload = init;
     </script>
 </body>
