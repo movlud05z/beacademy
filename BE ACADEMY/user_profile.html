@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="az">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Profil Səhifəsi | BEAcademy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #1a1a1a;
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .profile-card {
+            max-width: 550px;
+            margin: 0 auto;
+            background: #fff;
+            color: #333;
+            border-radius: 15px;
+            padding: 30px;
+            border-top: 6px solid #e60000;
+            position: relative;
+        }
+
+        .back-link {
+            position: absolute;
+            left: 20px;
+            top: 15px;
+            text-decoration: none;
+            color: #e60000;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .user-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .avatar-circle {
+            width: 80px;
+            height: 80px;
+            background: #f0f0f0;
+            border: 3px solid #e60000;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 700;
+            color: #e60000;
+        }
+
+        .stats-box {
+            display: flex;
+            justify-content: space-around;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-item b {
+            display: block;
+            font-size: 18px;
+            color: #000;
+        }
+
+        .stat-item span {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        /* Post Dizaynı */
+        .post-item {
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .post-text {
+            margin: 10px 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .post-img {
+            width: 100%;
+            border-radius: 8px;
+            margin-top: 5px;
+        }
+
+        /* Silmə və Like Düymələri */
+        .delete-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: none;
+            border: none;
+            color: #bbb;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .delete-btn:hover {
+            color: #e60000;
+        }
+
+        .like-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .like-btn {
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 18px;
+            padding: 0;
+            transition: transform 0.2s;
+        }
+
+        .like-btn:active {
+            transform: scale(1.3);
+        }
+
+        .liked-heart {
+            color: #e60000;
+        }
+
+        /* Yeni Post Yazma */
+        .post-input-area {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .txt-area {
+            width: 100%;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            resize: none;
+            font-family: inherit;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .btn-send {
+            background: #e60000;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            width: 100%;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="profile-card">
+        <a href="portal.html" class="back-link">← PORTALA QAYIT</a>
+
+        <div class="user-header">
+            <div class="avatar-circle" id="userAvat">?</div>
+            <h2 id="dispName" style="margin: 0;">Yüklənir...</h2>
+            <p id="dispUser" style="color: #e60000; font-weight: 600; margin: 5px 0;"></p>
+        </div>
+
+        <div class="stats-box">
+            <div class="stat-item"><b id="pCount">0</b><span>Post</span></div>
+            <div class="stat-item"><b>0</b><span>İzləyici</span></div>
+            <div class="stat-item"><b>0</b><span>İzlənilən</span></div>
+        </div>
+
+        <div id="createPostBox" class="post-input-area" style="display: none;">
+            <textarea id="postTxt" class="txt-area" rows="2" placeholder="Nə düşünürsən?"></textarea>
+            <input type="file" id="postFile" accept="image/*" style="margin-top: 10px; font-size: 12px;">
+            <button class="btn-send" onclick="submitPost()">PAYLAŞ</button>
+        </div>
+
+        <div id="postsList">
+            <h4 style="border-bottom: 2px solid #f4f4f4; padding-bottom: 5px;">Paylaşımlar</h4>
+            <div id="feed"></div>
+        </div>
+    </div>
+
+    <script>
+        const me = localStorage.getItem("currentUser");
+        const urlParams = new URLSearchParams(window.location.search);
+        let targetUser = urlParams.get("user") || me;
+
+        function loadProfile() {
+            const users = JSON.parse(localStorage.getItem("students") || "[]");
+            const userObj = users.find(u => u.username === targetUser);
+
+            if (userObj) {
+                document.getElementById("dispName").innerText = userObj.fullName;
+                document.getElementById("dispUser").innerText = "@" + userObj.username;
+                document.getElementById("userAvat").innerText = userObj.fullName[0];
+            }
+
+            if (targetUser === me) {
+                document.getElementById("createPostBox").style.display = "block";
+            }
+
+            renderPosts();
+        }
+
+        function renderPosts() {
+            const allPosts = JSON.parse(localStorage.getItem("all_posts") || "[]");
+            const userPosts = allPosts.filter(p => p.author === targetUser);
+            const feed = document.getElementById("feed");
+            document.getElementById("pCount").innerText = userPosts.length;
+
+            feed.innerHTML = userPosts.length === 0 ? "<p style='color:#999; text-align:center;'>Heç bir paylaşım yoxdur.</p>" : "";
+
+            userPosts.forEach(post => {
+                const hasLiked = post.likes && post.likes.includes(me);
+                const postHTML = `
+                <div class="post-item">
+                    ${post.author === me ? `<button class="delete-btn" onclick="removePost(${post.id})">SİL</button>` : ""}
+                    <div class="post-text">${post.content}</div>
+                    ${post.img ? `<img src="${post.img}" class="post-img">` : ""}
+                    <div class="like-section">
+                        <button class="like-btn ${hasLiked ? 'liked-heart' : ''}" onclick="hitLike(${post.id})">
+                            ${hasLiked ? '❤️' : '🤍'}
+                        </button>
+                        <span style="font-size: 14px; font-weight:600;">${post.likes ? post.likes.length : 0} bəyəni</span>
+                    </div>
+                </div>
+            `;
+                feed.innerHTML += postHTML;
+            });
+        }
+
+        function submitPost() {
+            const text = document.getElementById("postTxt").value;
+            const file = document.getElementById("postFile").files[0];
+            if (!text && !file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const posts = JSON.parse(localStorage.getItem("all_posts") || "[]");
+                const newPost = {
+                    id: Date.now(),
+                    author: me,
+                    content: text,
+                    img: file ? e.target.result : null,
+                    likes: [] // Like-lar artıq massiv kimi saxlanılır (fərdi)
+                };
+                posts.unshift(newPost);
+                localStorage.setItem("all_posts", JSON.stringify(posts));
+                document.getElementById("postTxt").value = "";
+                document.getElementById("postFile").value = "";
+                renderPosts();
+            };
+            if (file) reader.readAsDataURL(file); else reader.onload({});
+        }
+
+        function removePost(id) {
+            if (!confirm("Postu silmək istəyirsiniz?")) return;
+            let posts = JSON.parse(localStorage.getItem("all_posts") || "[]");
+            posts = posts.filter(p => p.id !== id);
+            localStorage.setItem("all_posts", JSON.stringify(posts));
+            renderPosts();
+        }
+
+        function hitLike(id) {
+            let posts = JSON.parse(localStorage.getItem("all_posts") || "[]");
+            const pIndex = posts.findIndex(p => p.id === id);
+
+            if (pIndex !== -1) {
+                if (!posts[pIndex].likes) posts[pIndex].likes = [];
+
+                const myLikeIndex = posts[pIndex].likes.indexOf(me);
+                if (myLikeIndex === -1) {
+                    posts[pIndex].likes.push(me); // Bəyən
+                } else {
+                    posts[pIndex].likes.splice(myLikeIndex, 1); // Bəyənməni geri çək
+                }
+
+                localStorage.setItem("all_posts", JSON.stringify(posts));
+                renderPosts();
+            }
+        }
+
+        loadProfile();
+    </script>
+
+</body>
+
+</html>

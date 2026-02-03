@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="az">
+
+<head>
+    <meta charset="UTF-8">
+    <title>BEAcademy | Profil</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="dynamic-body">
+
+    <div class="login-box" style="background: rgba(0,0,0,0.8); border: 2px solid #e60000; color: #fff; width: 500px;">
+        <h2 style="margin-bottom: 20px;">PROFİL AYARLARI</h2>
+
+        <div
+            style="width: 120px; height: 120px; border-radius: 50%; border: 3px solid #e60000; margin: 0 auto 20px; overflow: hidden; background: #222;">
+            <img id="userImg" src="https://via.placeholder.com/150"
+                style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+
+        <input type="file" id="imgUpload" style="display:none" accept="image/*">
+        <button class="login-btn" style="height: 35px; font-size: 12px; margin-bottom: 20px;"
+            onclick="document.getElementById('imgUpload').click()">ŞƏKİL SEÇ</button>
+
+        <form id="updatePassForm">
+            <div class="input-box"><input type="password" id="newPass" placeholder="Yeni Parol" style="color: #fff;"
+                    required></div>
+            <button type="submit" class="login-btn">PAROLU YENİLƏ</button>
+        </form>
+
+        <div style="margin-top: 20px;"><a href="portal.html" style="color: #fff; text-decoration: none;">← Portala
+                qayıt</a></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

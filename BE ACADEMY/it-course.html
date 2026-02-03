@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <title>BEAcademy | İT Təlimi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dynamic-body" style="display: block; padding: 40px;">
+
+    <header style="border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="color: #fff;">İT TƏLİM MATERİALLARI</h2>
+        <a href="portal.html" style="color: #fff; text-decoration: none; font-weight: bold;">← GERİ</a>
+    </header>
+
+    <div id="itMaterials" style="margin-top: 40px; display: grid; gap: 20px;">
+        </div>
+
+    <script src="script.js"></script>
+    <script>
+        // İT bölməsinə aid materialları süz və göstər
+        window.onload = function() {
+            const allMaterials = JSON.parse(localStorage.getItem("courseMaterials") || "[]");
+            const itMaterials = allMaterials.filter(m => m.course === "IT");
+            const container = document.getElementById("itMaterials");
+
+            if(itMaterials.length === 0) {
+                container.innerHTML = "<p style='color:#fff;'>Hələlik material əlavə edilməyib.</p>";
+            }
+
+            itMaterials.forEach(m => {
+                container.innerHTML += `
+                    <div class="portal-card" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3 style="margin:0;">${m.title}</h3>
+                            <small>${m.date}</small>
+                        </div>
+                        <a href="${m.link}" target="_blank" class="login-btn" style="width: auto; padding: 10px 25px; text-decoration: none; font-size: 12px;">BAX / YÜKLƏ</a>
+                    </div>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>

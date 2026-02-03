@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+/* Ümumi Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* KÖHNƏ GİRİŞ DİZAYNI - TOXUNULMADI */
+body {
+  background: #ffffff;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-box {
+  width: 400px;
+  background: #fff;
+  padding: 40px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.logo {
+  font-size: 45px;
+  font-weight: 800;
+  margin-bottom: 30px;
+}
+
+.logo .be {
+  color: #000;
+}
+
+.logo .academy {
+  color: #e60000;
+}
+
+.input-box {
+  display: flex;
+  align-items: center;
+  border: 2px solid #000;
+  margin-bottom: 15px;
+  height: 50px;
+  transition: 0.3s;
+}
+
+.input-box:focus-within {
+  border-color: #e60000;
+}
+
+.input-box .icon {
+  width: 50px;
+  text-align: center;
+  border-right: 2px solid #000;
+  font-size: 18px;
+}
+
+.input-box input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  padding: 0 15px;
+  font-size: 15px;
+}
+
+.login-btn {
+  width: 100%;
+  height: 50px;
+  background: #e60000;
+  border: none;
+  color: #fff;
+  font-weight: 800;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.4s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.login-btn:hover {
+  background: #000;
+}
+
+.msg {
+  margin-top: 20px;
+  font-size: 14px;
+  min-height: 20px;
+  font-weight: 600;
+}
+
+/* PORTAL VƏ PROFİL ÜÇÜN YENİ DİNAMİK DİZAYN (Yalnız bu səhifələrdə aktiv olacaq) */
+.dynamic-body {
+  background: #000 !important;
+  overflow-x: hidden;
+}
+
+.dynamic-body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 30% 30%, rgba(230, 0, 0, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 70% 70%, rgba(230, 0, 0, 0.1) 0%, transparent 50%);
+  animation: pulseGlow 10s infinite alternate;
+  z-index: -1;
+}
+
+@keyframes pulseGlow {
+  from {
+    opacity: 0.5;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.portal-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 30px;
+  color: #fff;
+  transition: 0.3s;
+  border-radius: 8px;
+}
+
+.portal-card:hover {
+  border-color: #e60000;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(230, 0, 0, 0.2);
+}
