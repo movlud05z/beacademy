@@ -35,6 +35,7 @@
             border: 1px solid #444;
             color: #fff;
             box-sizing: border-box;
+            outline: none;
         }
         button {
             width: 100%;
@@ -75,13 +76,13 @@
             const pass = document.getElementById("password").value.trim();
             const error = document.getElementById("error-msg");
 
-            // BOSS GİRİŞİ (Birbaşa Admin Panelə atır)
+            // BOSS GİRİŞİ - Səni birbaşa main.html-ə göndərir
             if(user === "admin" && pass === "admin777") {
-                window.location.href = "admin.html";
+                window.location.href = "main.html"; // Bura main.html edildi
                 return;
             }
 
-            // TRAINER GİRİŞİ (Bazadan yoxlayır)
+            // TRAINER GİRİŞİ - Bazadan yoxlayır və portal.html-ə göndərir
             try {
                 const response = await fetch(`https://beacademy-c8316-default-rtdb.firebaseio.com/users/${user}.json`);
                 const userData = await response.json();
