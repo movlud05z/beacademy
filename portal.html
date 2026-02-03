@@ -52,6 +52,15 @@
         .premium-card { border-left: 8px solid #0095f6 !important; background: linear-gradient(to right, #f0faff, #ffffff) !important; }
         
         #userNamePortal { display: inline-flex; align-items: center; gap: 5px; }
+
+        /* PROFESSIONAL PDF DOWNLOAD BUTTONS */
+        .pdf-download-card { display: flex; align-items: center; justify-content: space-between; background: #f8f9fa; border: 1px solid #eee; padding: 15px 25px; border-radius: 15px; margin-bottom: 15px; transition: 0.3s; text-decoration: none; color: #000 !important; }
+        .pdf-download-card:hover { background: #fff; border-color: #e60000; box-shadow: 0 10px 20px rgba(0,0,0,0.05); transform: translateX(5px); }
+        .pdf-icon { width: 40px; height: 40px; background: #ffebee; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #e60000; font-weight: 900; font-size: 12px; margin-right: 15px; }
+        .pdf-info { flex-grow: 1; text-align: left; }
+        .pdf-title { font-weight: 700; font-size: 14px; display: block; }
+        .pdf-meta { font-size: 11px; color: #999; }
+        .download-arrow { font-size: 20px; color: #e60000; font-weight: 900; }
     </style>
 </head>
 <body class="dynamic-body">
@@ -235,10 +244,35 @@
         async function openSection(sectionId) {
             const modal = document.getElementById("contentModal");
             modal.style.display = "block";
+            const body = document.getElementById("sectionBody");
             document.getElementById("sectionTitle").innerText = sectionId + " MODULE";
+            body.innerHTML = "<p style='color:#888'>Loading resources...</p>";
+            
             const res = await fetch(`${CONTENT_URL}/${sectionId}.json`);
             let data = await res.json();
-            document.getElementById("sectionBody").innerHTML = data || "No data available.";
+
+            if(!data) {
+                body.innerHTML = "No data available.";
+                return;
+            }
+
+            // PDF LINK DETECTOR & PROFESSIONAL FORMATTER
+            // Bu hissə gələn datadakı linkləri tapıb professional kartlara çevirir
+            let formattedData = data.replace(/(https?:\/\/[^\s]+(?:\.pdf))/gi, function(url) {
+                let fileName = url.split('/').pop().replace(/%20/g, ' ');
+                return `
+                    <a href="${url}" target="_blank" class="pdf-download-card">
+                        <div class="pdf-icon">PDF</div>
+                        <div class="pdf-info">
+                            <span class="pdf-title">${fileName}</span>
+                            <span class="pdf-meta">Materialı yükləmək üçün klikləyin</span>
+                        </div>
+                        <div class="download-arrow">↓</div>
+                    </a>
+                `;
+            });
+
+            body.innerHTML = formattedData;
         }
     </script>
 </body>
