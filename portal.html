@@ -14,38 +14,45 @@
         .portal-card:hover { border-color: #e60000; transform: translateY(-10px); box-shadow: 0 20px 50px rgba(230,0,0,0.15); }
         .login-btn { background: #e60000; color: #fff; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 15px; transition: 0.3s; letter-spacing: 1px; }
 
-        /* ULTRA LUX MODAL */
+        /* MODALS */
         #structureModal, #profileModal, #contentModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); z-index: 10000; backdrop-filter: blur(30px); overflow-y: auto; }
         .modal-container { background: #fff; max-width: 500px; margin: 80px auto; border-radius: 40px; position: relative; text-align: center; color: #000; box-shadow: 0 0 100px rgba(0,0,0,0.5); animation: luxIn 0.8s cubic-bezier(0.19, 1, 0.22, 1); border: 1px solid rgba(255,255,255,0.1); overflow: hidden; }
         @keyframes luxIn { from { opacity: 0; transform: translateY(100px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
         
-        .close-btn { position: absolute; right: 30px; top: 25px; font-size: 35px; cursor: pointer; color: #fff; z-index: 10001; transition: 0.4s; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        .close-btn { position: absolute; right: 30px; top: 25px; font-size: 35px; cursor: pointer; color: #fff; z-index: 10001; transition: 0.4s; }
         .close-btn:hover { transform: rotate(180deg); color: #e60000; }
 
-        /* LUX HEADER & AVATAR */
+        /* LUX PROFILE ELEMENTS */
         .lux-header { height: 180px; background: #000; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .lux-header::before { content: ''; position: absolute; width: 200%; height: 200%; background: conic-gradient(from 180deg at 50% 50%, #000, #222, #000); animation: rotate 15s linear infinite; }
         @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
         .lux-avatar-wrap { position: absolute; bottom: -60px; left: 50%; transform: translateX(-50%); z-index: 10; }
         .lux-avatar { width: 130px; height: 130px; background: #fff; border-radius: 50%; border: 8px solid #fff; box-shadow: 0 25px 50px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .lux-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* MAVİ TİK & ANIMATION */
+        
         .verified-badge { width: 20px; height: 20px; vertical-align: middle; margin-left: 6px; animation: tickFloat 2s ease-in-out infinite; filter: drop-shadow(0 0 5px rgba(0, 149, 246, 0.5)); }
         @keyframes tickFloat { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-2px) scale(1.1); } }
-
+        
         .decode-text { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 30px; color: #000; display: inline-flex; align-items: center; justify-content: center; margin-top: 70px; min-height: 45px; }
-
         .premium-glow { position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px; border-radius: 50%; border: 3px solid #0095f6; animation: pulseGlow 2s infinite; }
         @keyframes pulseGlow { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.2); opacity: 0; } }
-
         .gold-label { background: linear-gradient(90deg, #8a642a, #d4af37, #eddf95, #d4af37, #8a642a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 11px; font-weight: 900; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 5px; display: block; }
-        
-        .staff-card { background: #fff; padding: 20px; border-radius: 18px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); border: 1px solid transparent; }
-        .staff-card:hover { transform: scale(1.02); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-        .premium-card { border-left: 8px solid #0095f6 !important; background: linear-gradient(to right, #f0faff, #ffffff) !important; box-shadow: 0 10px 20px rgba(0, 149, 246, 0.1); }
 
+        /* STRUCTURE HIERARCHY DESIGN */
+        .org-tree { display: flex; flex-direction: column; align-items: center; gap: 40px; margin-top: 40px; }
+        .org-node { background: #fff; color: #000; padding: 20px 40px; border-radius: 15px; position: relative; font-weight: 800; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .org-node::after { content: ''; position: absolute; bottom: -40px; left: 50%; width: 2px; height: 40px; background: #e60000; }
+        .org-node.root { border-bottom: 5px solid #e60000; font-size: 22px; }
+        .org-node.root::after { height: 40px; }
+        .org-children { display: flex; gap: 20px; position: relative; padding-top: 20px; border-top: 2px solid #e60000; }
+        .org-child { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 15px 25px; border-radius: 12px; font-size: 14px; font-weight: 600; text-align: center; }
+        .org-node.no-line::after { display: none; }
+
+        /* STAFF CARDS */
+        .staff-card { background: #fff; padding: 20px; border-radius: 18px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.4s; border: 1px solid transparent; }
+        .staff-card:hover { transform: scale(1.02); }
+        .premium-card { border-left: 8px solid #0095f6 !important; background: linear-gradient(to right, #f0faff, #ffffff) !important; }
+        
         #userNamePortal { display: inline-flex; align-items: center; gap: 5px; }
     </style>
 </head>
@@ -88,7 +95,6 @@
                 <span id="goldTag" class="gold-label" style="display: none;">Master Professional</span>
                 <div id="profName" class="decode-text"></div>
                 <p id="profUser" style="color:#999; font-weight:600; font-size: 14px; margin: 5px 0 35px 0; font-family: 'Space Mono';"></p>
-                
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div style="background: #fcfcfc; padding: 20px; border-radius: 20px; text-align: left; border: 1px solid #eee;">
                         <small style="color: #ccc; font-weight: 800; font-size: 9px; letter-spacing: 2px;">POSITION</small>
@@ -105,11 +111,32 @@
 
     <div id="structureModal">
         <span class="close-btn" onclick="document.getElementById('structureModal').style.display='none'">&times;</span>
-        <div class="modal-container" style="max-width: 900px; background: transparent; color: #fff; box-shadow: none; border: none;">
-            <h2 style="letter-spacing: 8px; font-weight: 900;">ORGANIZATION</h2>
-            <div style="margin-top: 50px;">
-                <div style="background:#fff; color:#000; padding:25px 50px; border-radius:20px; display:inline-block; border-bottom: 6px solid #e60000;">
-                    <small style="letter-spacing: 2px; color: #999;">CHAIRMAN</small><br><b style="font-size: 20px;">Elçin Mahmudov</b>
+        <div class="modal-container" style="max-width: 950px; background: transparent; color: #fff; box-shadow: none; border: none; margin-top: 50px;">
+            <h2 style="letter-spacing: 8px; font-weight: 900; text-align: center; margin-bottom: 20px;">BE ACADEMY HIERARCHY</h2>
+            
+            <div class="org-tree">
+                <div class="org-node root">
+                    <small style="display: block; font-size: 10px; opacity: 0.6; letter-spacing: 2px;">CHAIRMAN</small>
+                    ELÇİN MAHMUDOV
+                </div>
+                
+                <div class="org-children">
+                    <div class="org-child">
+                        <small style="display:block; opacity: 0.5; font-size: 9px;">KEA HEAD</small>
+                        Tural Səmədov
+                    </div>
+                    <div class="org-child">
+                        <small style="display:block; opacity: 0.5; font-size: 9px;">İT HEAD</small>
+                        Anar Hüseynov
+                    </div>
+                    <div class="org-child">
+                        <small style="display:block; opacity: 0.5; font-size: 9px;">TV HEAD</small>
+                        Rəşad Əliyev
+                    </div>
+                    <div class="org-child">
+                        <small style="display:block; opacity: 0.5; font-size: 9px;">BƏYAZ ƏŞYA HEAD</small>
+                        Vüsal Quliyev
+                    </div>
                 </div>
             </div>
         </div>
@@ -130,17 +157,14 @@
         const currentLog = localStorage.getItem("currentUser");
         const blueTickImg = `<img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" class="verified-badge">`;
 
-        // LUX DECODER EFFECT
         function luxDecode(element, finalName, isVerified) {
             const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             let iteration = 0;
             const interval = setInterval(() => {
-                element.innerText = finalName.split("")
-                    .map((char, index) => {
-                        if(index < iteration) return finalName[index];
-                        return chars[Math.floor(Math.random() * chars.length)];
-                    }).join("");
-
+                element.innerText = finalName.split("").map((char, index) => {
+                    if(index < iteration) return finalName[index];
+                    return chars[Math.floor(Math.random() * chars.length)];
+                }).join("");
                 if(iteration >= finalName.length) {
                     clearInterval(interval);
                     if(isVerified) element.innerHTML = finalName + " " + blueTickImg;
@@ -169,26 +193,19 @@
                 document.getElementById("profileModal").style.display = "block";
                 const nameEl = document.getElementById("profName");
                 luxDecode(nameEl, u.fullname.toUpperCase(), u.isVerified);
-
                 document.getElementById("profUser").innerText = "@" + u.username.toUpperCase();
                 document.getElementById("profInit").innerHTML = u.img ? `<img src="${u.img}">` : `<b style="font-size:50px; color:#e60000">${u.fullname[0]}</b>`;
-
                 const glow = document.getElementById("premiumGlow");
                 const goldTag = document.getElementById("goldTag");
                 const vStatus = document.getElementById("verifStatus");
                 const header = document.getElementById("luxHeader");
-
                 if(u.isVerified) {
-                    glow.className = "premium-glow";
-                    goldTag.style.display = "block";
-                    vStatus.innerText = "VERIFIED ACCOUNT";
-                    vStatus.style.color = "#0095f6";
+                    glow.className = "premium-glow"; goldTag.style.display = "block";
+                    vStatus.innerText = "VERIFIED ACCOUNT"; vStatus.style.color = "#0095f6";
                     header.style.background = "linear-gradient(to bottom, #000, #001a2e)";
                 } else {
-                    glow.className = "";
-                    goldTag.style.display = "none";
-                    vStatus.innerText = "STANDARD ACCESS";
-                    vStatus.style.color = "#333";
+                    glow.className = ""; goldTag.style.display = "none";
+                    vStatus.innerText = "STANDARD ACCESS"; vStatus.style.color = "#333";
                     header.style.background = "#111";
                 }
             }
