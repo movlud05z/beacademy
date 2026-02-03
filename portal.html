@@ -77,7 +77,7 @@
             <span class="close-btn" onclick="document.getElementById('contentModal').style.display='none'">&times;</span>
             <h2 id="sectionTitle" style="color:#e60000;"></h2>
             <hr>
-            <div id="sectionBody" style="margin-top:20px; color:#666; font-style:italic;">Hələ ki, məlumat yoxdur.</div>
+            <div id="sectionBody" style="margin-top:20px; color:#333; text-align: left;">Hələ ki, məlumat yoxdur.</div>
         </div>
     </div>
 
@@ -109,25 +109,29 @@
             if(u) document.getElementById("userNamePortal").innerHTML = u.fullname + (u.isVerified ? blueTick : "");
         };
 
-        // BÖLMƏNİ AÇMAQ (GitHub 404 xətası verməyəcək)
         async function openSection(sectionId) {
-            document.getElementById("contentModal").style.display = "block";
-            document.getElementById("sectionTitle").innerText = sectionId + " Bölməsi";
+            const modal = document.getElementById("contentModal");
+            const title = document.getElementById("sectionTitle");
             const body = document.getElementById("sectionBody");
-            body.innerHTML = "Yüklənir...";
 
-            // Trainerdən məlumat gəlibmi deyə yoxla
-            const res = await fetch(`${CONTENT_URL}/${sectionId}.json`);
-            const data = await res.json();
-            
-            if(data) {
-                body.innerHTML = data; // Əgər məlumat varsa (məs. HTML kod şəklində) bura düşəcək
-                body.style.fontStyle = "normal";
-                body.style.color = "#333";
-            } else {
-                body.innerHTML = "Hələ ki, bu bölmə üzrə təlimat və ya məlumat ötürülməyib.";
-                body.style.fontStyle = "italic";
-                body.style.color = "#666";
+            modal.style.display = "block";
+            title.innerText = sectionId + " Bölməsi";
+            body.innerHTML = "<div style='text-align:center;'>Yüklənir...</div>";
+
+            try {
+                const res = await fetch(`${CONTENT_URL}/${sectionId}.json`);
+                let data = await res.json();
+                
+                if(data) {
+                    // Əgər gələn data JSON string daxilindədirsə, onu təmizləyirik
+                    body.innerHTML = data;
+                    body.style.fontStyle = "normal";
+                    body.style.color = "#333";
+                } else {
+                    body.innerHTML = "<div style='text-align:center; font-style:italic; color:#666;'>Hələ ki, bu bölmə üzrə təlimat və ya məlumat ötürülməyib.</div>";
+                }
+            } catch (err) {
+                body.innerHTML = "Məlumatı yükləyərkən xəta baş verdi.";
             }
         }
 
