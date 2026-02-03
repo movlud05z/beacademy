@@ -168,3 +168,101 @@
 </body>
 
 </html> -->
+
+
+
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BEAcademy | Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --accent: #ff0000; --bg: #0a0a0a; --card: #161616; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .admin-box { background: var(--card); padding: 40px; border-radius: 24px; border: 1px solid #333; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h2 { text-align: center; color: var(--accent); margin-bottom: 25px; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-size: 13px; color: #888; margin-bottom: 5px; }
+        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #333; background: #1f1f1f; color: white; outline: none; box-sizing: border-box; }
+        input:focus { border-color: var(--accent); }
+        button { width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        button:hover { opacity: 0.8; transform: translateY(-2px); }
+        #status { text-align: center; margin-top: 15px; font-size: 14px; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-box">
+        <h2>İşçi Əlavə Et</h2>
+        
+        <div class="input-group">
+            <label>Tam Adı (Məs: Əli Əliyev)</label>
+            <input type="text" id="fname" placeholder="Ad və Soyad" autocomplete="off">
+        </div>
+
+        <div class="input-group">
+            <label>İstifadəçi adı (Login)</label>
+            <input type="text" id="un" placeholder="Məs: ali01" autocomplete="off">
+        </div>
+
+        <div class="input-group">
+            <label>Parol</label>
+            <input type="password" id="ps" placeholder="Məs: 12345">
+        </div>
+
+        <button onclick="addUser()">BAZAYA ƏLAVƏ ET</button>
+        <p id="status"></p>
+    </div>
+
+    <script>
+        async function addUser() {
+            const fullname = document.getElementById('fname').value.trim();
+            const username = document.getElementById('un').value.trim();
+            const password = document.getElementById('ps').value.trim();
+            const status = document.getElementById('status');
+
+            if(!fullname || !username || !password) {
+                status.innerText = "Bütün xanaları doldurun!";
+                status.style.color = "yellow";
+                return;
+            }
+
+            status.innerText = "Göndərilir...";
+            status.style.color = "orange";
+
+            // Sənin Realtime Database linkin
+            const url = `https://beacademy-c8316-default-rtdb.firebaseio.com/users/${username}.json`;
+
+            const userData = {
+                fullname: fullname,
+                username: username,
+                password: password
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'PUT', // PUT istifadə edirik ki, eyni logində olanın üstünə yazsın
+                    body: JSON.stringify(userData)
+                });
+
+                if(response.ok) {
+                    status.innerText = "Uğurla əlavə olundu!";
+                    status.style.color = "#2ecc71";
+                    // Xanaları təmizlə
+                    document.getElementById('fname').value = "";
+                    document.getElementById('un').value = "";
+                    document.getElementById('ps').value = "";
+                } else {
+                    throw new Error();
+                }
+            } catch (e) {
+                status.innerText = "Xəta! İnterneti və ya Firebase Rules-u yoxla.";
+                status.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>
+
