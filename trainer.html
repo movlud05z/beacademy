@@ -8,144 +8,120 @@
     <style>
         :root { --primary: #e60000; --dark: #1a1a1a; --gray: #f4f4f4; }
         body { font-family: 'Poppins', sans-serif; background: var(--gray); margin: 0; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
-        .nav-tabs { display: flex; gap: 10px; margin-bottom: 25px; background: #eee; padding: 5px; border-radius: 12px; }
-        .tab-btn { flex: 1; padding: 12px; border: none; background: none; cursor: pointer; font-weight: 700; border-radius: 10px; color: #555; }
-        .tab-btn.active { background: #fff; color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .section { display: none; }
-        .section.active { display: block; animation: fadeIn 0.5s; }
+        .container { max-width: 1000px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
         
-        .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        .upload-area { border: 2px dashed #bbb; padding: 40px; text-align: center; border-radius: 15px; background: #fafafa; cursor: pointer; transition: 0.3s; }
-        .upload-area:hover { border-color: var(--primary); background: #fff5f5; }
-        
-        input[type="text"], select { padding: 15px; border: 1px solid #ccc; border-radius: 10px; width: 100%; box-sizing: border-box; font-size: 16px; margin-top: 10px; }
-        .btn { padding: 15px; border: none; border-radius: 10px; cursor: pointer; font-weight: 800; width: 100%; margin-top: 10px; text-transform: uppercase; }
-        .btn-add { background: var(--primary); color: white; }
-        .btn-delete { background: #ff4d4d; color: white; padding: 5px 10px; font-size: 12px; border-radius: 5px; cursor: pointer; }
-        
-        /* Cədvəl Stili */
-        .materials-list { margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 12px; border-bottom: 1px solid #ddd; text-align: left; }
-        th { background: #f9f9f9; color: #555; }
+        .upload-section { 
+            background: #fdfdfd; padding: 25px; border-radius: 15px; border: 1px solid #eee; margin-bottom: 30px;
+        }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .upload-area { border: 2px dashed #bbb; padding: 30px; text-align: center; border-radius: 15px; cursor: pointer; display: block; margin-bottom: 15px; }
+        .upload-area:hover { border-color: var(--primary); background: #fff5f5; }
+
+        input[type="text"], select { padding: 12px; border: 1px solid #ccc; border-radius: 8px; width: 100%; margin-bottom: 10px; font-family: inherit; }
+        
+        .btn { padding: 15px; border: none; border-radius: 10px; cursor: pointer; font-weight: 800; width: 100%; text-transform: uppercase; }
+        .btn-add { background: var(--primary); color: white; }
+
+        /* SİLMƏ HİSSƏSİ ÜÇÜN STİL */
+        .management-section { margin-top: 40px; border-top: 3px solid var(--primary); padding-top: 20px; }
+        .manage-card { 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: #fff; padding: 15px; border-radius: 10px; border: 1px solid #eee; 
+            margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .btn-delete { background: #ff4d4d; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 700; }
+        .btn-delete:hover { background: #cc0000; }
+        
+        .course-tag { background: #333; color: white; padding: 3px 8px; border-radius: 4px; font-size: 12px; margin-right: 10px; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <div style="font-size: 24px; font-weight: 800;"><span style="color:var(--primary)">BE</span>Academy Trainer</div>
-            <a href="index.html" onclick="localStorage.clear()" style="text-decoration:none; font-weight:800; color:#333; border: 2px solid #333; padding: 5px 15px; border-radius: 8px;">ÇIXIŞ</a>
+        <h1 style="color:var(--primary); text-align:center;">Trainer İdarəetmə Paneli</h1>
+
+        <div class="upload-section">
+            <h3 style="margin-top:0;">1. Yeni Material Yüklə</h3>
+            <label for="universalPicker" class="upload-area">
+                <span id="fileNameDisplay" style="font-weight:700;">📂 FAYLI SEÇİN</span>
+                <input type="file" id="universalPicker" style="display:none;" onchange="handleFileSelect(this)">
+            </label>
+            
+            <input type="text" id="mTitle" placeholder="Materialın Başlığı (Məsələn: Kompyuterin Əsasları)">
+            <select id="targetCourse">
+                <option value="IT">💻 IT Bölməsi</option>
+                <option value="KEA">☕ KEA Bölməsi</option>
+                <option value="BEYAZ">❄️ BEYAZ Bölməsi</option>
+                <option value="TV">📺 TV Bölməsi</option>
+            </select>
+            <button class="btn btn-add" id="uploadBtn" onclick="pushToDatabase()">SİSTEMƏ KÖÇÜR</button>
         </div>
 
-        <div class="nav-tabs">
-            <button class="tab-btn active" onclick="showSection('materials')">Material İdarəetməsi</button>
-            <button class="tab-btn" onclick="showSection('quiz')">İmtahanlar</button>
-        </div>
-
-        <div id="materials" class="section active">
-            <div class="grid-layout">
-                <div>
-                    <label for="universalPicker" class="upload-area">
-                        <div style="font-size: 50px; margin-bottom: 10px;">📂</div>
-                        <p id="fileNameDisplay" style="margin: 0; font-weight: 700; color: #333;">FAYL SEÇ</p>
-                        <input type="file" id="universalPicker" style="display:none;" onchange="handleFileSelect(this)">
-                    </label>
-
-                    <div style="background: #fff; padding: 20px; border-radius: 15px; border: 1px solid #eee; margin-top: 15px;">
-                        <input type="text" id="mTitle" placeholder="Materialın Başlığı">
-                        <select id="targetCourse">
-                            <option value="IT">IT Bölməsi</option>
-                            <option value="KEA">KEA Bölməsi</option>
-                            <option value="BEYAZ">BEYAZ Bölməsi</option>
-                            <option value="TV">TV Bölməsi</option>
-                        </select>
-                        <button class="btn btn-add" id="uploadBtn" onclick="pushToDatabase()">SİSTEMƏ KÖÇÜR</button>
-                    </div>
-                </div>
-
-                <div class="materials-list">
-                    <h3 style="margin:0 0 10px 0;">Sistemdə olan materiallar:</h3>
-                    <div id="statusMsg"></div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Bölmə</th>
-                                <th>Başlıq</th>
-                                <th>Əməliyyat</th>
-                            </tr>
-                        </thead>
-                        <tbody id="materialsTableBody">
-                            </tbody>
-                    </table>
-                </div>
+        <div class="management-section">
+            <h3>2. Mövcud Materialları İdarə Et (SİL)</h3>
+            <p style="font-size: 13px; color: #666;">Portalda hal-hazırda aktiv olan dərslər:</p>
+            <div id="materialsList">
+                <p>Yüklənir...</p>
             </div>
         </div>
-
-        <div id="quiz" class="section"><h3>İmtahan Paneli Tezliklə...</h3></div>
     </div>
 
     <script>
         const FIREBASE_DB = "https://beacademy-c8316-default-rtdb.firebaseio.com/portal_content";
         let hiddenData = ""; 
 
-        // Səhifə açılanda materialları gətir
+        // Səhifə açılan kimi siyahını göstər
         window.onload = fetchMaterials;
-
-        function showSection(id) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
 
         function handleFileSelect(input) {
             const file = input.files[0];
             if (!file) return;
-            document.getElementById('fileNameDisplay').innerText = "SEÇİLDİ: " + file.name;
+            document.getElementById('fileNameDisplay').innerText = "✅ SEÇİLDİ: " + file.name;
             const reader = new FileReader();
             reader.onload = e => hiddenData = e.target.result;
             reader.readAsText(file);
         }
 
-        // BAZADAN MATERİALLARI ÇƏKMƏK
+        // BAZADAN MATERİALLARI ÇƏKİB SİHAHIYA DÜZÜR
         async function fetchMaterials() {
-            const tbody = document.getElementById('materialsTableBody');
-            tbody.innerHTML = "<tr><td colspan='3'>Yüklənir...</td></tr>";
+            const listDiv = document.getElementById('materialsList');
             try {
                 const response = await fetch(`${FIREBASE_DB}.json`);
                 const data = await response.json();
-                tbody.innerHTML = "";
+                listDiv.innerHTML = "";
                 
                 if (data) {
                     for (let course in data) {
                         if (data[course]) {
-                            const row = `<tr>
-                                <td><b>${course}</b></td>
-                                <td>Məlumat yüklənib</td>
-                                <td><button class="btn-delete" onclick="deleteMaterial('${course}')">SİL</button></td>
-                            </tr>`;
-                            tbody.innerHTML += row;
+                            const card = `
+                                <div class="manage-card">
+                                    <div>
+                                        <span class="course-tag">${course}</span>
+                                        <strong>Material yüklənib</strong>
+                                    </div>
+                                    <button class="btn-delete" onclick="deleteMaterial('${course}')">SİSTEMDƏN SİL</button>
+                                </div>`;
+                            listDiv.innerHTML += card;
                         }
                     }
                 } else {
-                    tbody.innerHTML = "<tr><td colspan='3'>Heç bir material yoxdur.</td></tr>";
+                    listDiv.innerHTML = "<p>Heç bir material tapılmadı.</p>";
                 }
-            } catch (err) { tbody.innerHTML = "<tr><td colspan='3'>Məlumatı gətirmək olmadı.</td></tr>"; }
+            } catch (err) { listDiv.innerHTML = "<p>Xəta: Siyahı gətirilə bilmədi.</p>"; }
         }
 
-        // MATERİAL SİLMƏK
+        // SİLMƏ FUNKSİYASI
         async function deleteMaterial(course) {
-            if (!confirm(course + " bölməsindəki materialı silmək istəyirsiniz?")) return;
+            if (!confirm(course + " bölməsini tamamilə silmək istəyirsiniz?")) return;
+            
             try {
                 await fetch(`${FIREBASE_DB}/${course}.json`, { method: 'DELETE' });
-                fetchMaterials(); // Siyahını yenilə
-            } catch (err) { alert("Silinmə zamanı xəta!"); }
+                alert("Silindi!");
+                fetchMaterials(); // Siyahını təzələ
+            } catch (err) { alert("Silinmədi!"); }
         }
 
-        // MATERİAL YÜKLƏMƏK
+        // YÜKLƏMƏ FUNKSİYASI
         async function pushToDatabase() {
             const title = document.getElementById('mTitle').value.trim();
             const folder = document.getElementById('targetCourse').value;
@@ -166,8 +142,8 @@
                 alert("Uğurla yükləndi!");
                 document.getElementById('mTitle').value = "";
                 hiddenData = "";
-                document.getElementById('fileNameDisplay').innerText = "FAYL SEÇ";
-                fetchMaterials(); // Siyahını yenilə
+                document.getElementById('fileNameDisplay').innerText = "📂 FAYLI SEÇİN";
+                fetchMaterials(); // Siyahını təzələ
             } catch (err) { alert("Xəta!"); }
             finally { btn.innerText = "SİSTEMƏ KÖÇÜR"; btn.disabled = false; }
         }
