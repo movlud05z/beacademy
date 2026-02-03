@@ -4,41 +4,68 @@
     <meta charset="UTF-8">
     <title>BEAcademy | Admin Panel</title>
     <style>
-        body { font-family: sans-serif; background: #0a0a0a; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .box { background: #161616; padding: 30px; border-radius: 20px; border: 1px solid #333; width: 300px; text-align: center; }
-        input { width: 90%; padding: 10px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; background: #222; color: white; }
-        button { width: 100%; padding: 12px; background: #ff0000; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        body { font-family: 'Poppins', sans-serif; background: #0a0a0a; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .admin-box { background: #161616; padding: 40px; border-radius: 20px; border: 1px solid #333; width: 350px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h2 { color: #ff0000; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #333; background: #1f1f1f; color: white; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: #ff0000; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #cc0000; }
+        #status { margin-top: 15px; font-size: 14px; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h2>İşçi Əlavə Et</h2>
-        <input type="text" id="fname" placeholder="Tam Adı">
-        <input type="text" id="un" placeholder="Login">
-        <input type="text" id="ps" placeholder="Parol">
-        <button onclick="addUser()">ƏLAVƏ ET</button>
-        <p id="st"></p>
+
+    <div class="admin-box">
+        <h2>İşçi/Boss Əlavə Et</h2>
+        <input type="text" id="fullname" placeholder="Tam Adı (məs: Mövlud M.)">
+        <input type="text" id="username" placeholder="Login (məs: admin)">
+        <input type="text" id="password" placeholder="Parol">
+        <button onclick="saveUser()">BAZAYA YAZ</button>
+        <p id="status"></p>
     </div>
 
     <script>
-        async function addUser() {
-            const username = document.getElementById('un').value.trim();
-            const fullname = document.getElementById('fname').value.trim();
-            const password = document.getElementById('ps').value.trim();
-            const st = document.getElementById('st');
+        async function saveUser() {
+            const fn = document.getElementById('fullname').value.trim();
+            const un = document.getElementById('username').value.trim();
+            const ps = document.getElementById('password').value.trim();
+            const st = document.getElementById('status');
 
-            // Sənin düzgün linkin:
-            const url = `https://beacademy-c8316-default-rtdb.firebaseio.com/users/${username}.json`;
+            if(!fn || !un || !ps) {
+                st.innerText = "Xanaları doldurun!";
+                st.style.color = "yellow";
+                return;
+            }
+
+            st.innerText = "Yazılır...";
+            
+            // SƏNİN REALTİME DATABASE LİNKİN:
+            const url = `https://beacademy-c8316-default-rtdb.firebaseio.com/users/${un}.json`;
 
             try {
-                await fetch(url, {
+                const response = await fetch(url, {
                     method: 'PUT',
-                    body: JSON.stringify({ fullname, username, password })
+                    body: JSON.stringify({
+                        fullname: fn,
+                        username: un,
+                        password: ps
+                    })
                 });
-                st.innerText = "Uğurla əlavə olundu!";
-                st.style.color = "green";
-            } catch (e) {
-                st.innerText = "Xəta baş verdi!";
+
+                if(response.ok) {
+                    st.innerText = "UĞURLA ƏLAVƏ EDİLDİ! ✅";
+                    st.style.color = "#00ff00";
+                    // Xanaları təmizləyirik
+                    document.getElementById('fullname').value = "";
+                    document.getElementById('username').value = "";
+                    document.getElementById('password').value = "";
+                } else {
+                    st.innerText = "Xəta baş verdi! ❌";
+                    st.style.color = "red";
+                }
+            } catch (error) {
+                st.innerText = "İnternet və ya Baza xətası!";
+                st.style.color = "red";
             }
         }
     </script>
