@@ -12,15 +12,15 @@
         .nav-tabs { display: flex; gap: 10px; margin-bottom: 25px; background: #eee; padding: 5px; border-radius: 12px; }
         .tab-btn { flex: 1; padding: 12px; border: none; background: none; cursor: pointer; font-weight: 700; border-radius: 10px; color: #555; }
         .tab-btn.active { background: #fff; color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .section { display: none; animation: slideUp 0.4s ease; }
-        .section.active { display: block; }
-        .upload-area { border: 2px dashed #bbb; padding: 40px; text-align: center; border-radius: 15px; background: #fafafa; cursor: pointer; transition: 0.3s; display: block; }
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.5s; }
+        .upload-area { border: 2px dashed #bbb; padding: 40px; text-align: center; border-radius: 15px; background: #fafafa; cursor: pointer; transition: 0.3s; }
         .upload-area:hover { border-color: var(--primary); background: #fff5f5; }
-        input[type="text"], select { padding: 15px; border: 1px solid #ccc; border-radius: 10px; width: 100%; box-sizing: border-box; font-family: inherit; font-size: 16px; margin-top: 10px; }
+        input[type="text"], select { padding: 15px; border: 1px solid #ccc; border-radius: 10px; width: 100%; box-sizing: border-box; font-size: 16px; margin-top: 10px; }
         .btn { padding: 18px; border: none; border-radius: 10px; cursor: pointer; font-weight: 800; width: 100%; margin-top: 20px; text-transform: uppercase; }
         .btn-add { background: var(--primary); color: white; transition: 0.3s; }
-        .btn-add:hover { background: #b30000; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .btn-add:disabled { background: #999; cursor: not-allowed; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -28,7 +28,7 @@
     <div class="container">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
             <div style="font-size: 24px; font-weight: 800;"><span style="color:var(--primary)">BE</span>Academy Trainer</div>
-            <a href="index.html" style="text-decoration:none; font-weight:800; color:#333; border: 2px solid #333; padding: 5px 15px; border-radius: 8px;">ÇIXIŞ</a>
+            <a href="index.html" onclick="localStorage.clear()" style="text-decoration:none; font-weight:800; color:#333; border: 2px solid #333; padding: 5px 15px; border-radius: 8px;">ÇIXIŞ</a>
         </div>
 
         <div class="nav-tabs">
@@ -42,15 +42,14 @@
                 <label for="universalPicker" class="upload-area">
                     <div style="font-size: 60px; margin-bottom: 15px;">📂</div>
                     <p id="fileNameDisplay" style="margin: 0; font-weight: 700; color: #333; font-size: 18px;">CİHAZDAN FAYL SEÇ</p>
-                    <p style="font-size: 13px; color: #888; margin-top: 5px;">Seçilən faylın məzmunu gizli saxlanılır</p>
                     <input type="file" id="universalPicker" style="display:none;" onchange="handleFileSelect(this)">
                 </label>
 
                 <div style="background: #fff; padding: 25px; border-radius: 20px; border: 1px solid #eee; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
-                    <label style="font-weight: 700; color: #444;">Materialın Başlığı:</label>
-                    <input type="text" id="mTitle" placeholder="Məsələn: Kompyuterin əsasları">
+                    <label style="font-weight: 700; color: #444;">Materialın Başlığı (Portalda görünəcək ad):</label>
+                    <input type="text" id="mTitle" placeholder="Məsələn: Kompyuterin Əsasları">
                     
-                    <label style="display:block; margin-top:20px; font-weight: 700; color: #444;">Hədəf Bölmə:</label>
+                    <label style="display:block; margin-top:20px; font-weight: 700; color: #444;">Hədəf Bölmə (portal.html üçün):</label>
                     <select id="targetCourse">
                         <option value="IT">💻 IT Bölməsi</option>
                         <option value="KEA">☕ KEA Bölməsi</option>
@@ -68,8 +67,9 @@
     </div>
 
     <script>
+        // BAZA URL - portal_content daxilinə yazır
         const FIREBASE_DB = "https://beacademy-c8316-default-rtdb.firebaseio.com/portal_content";
-        let hiddenData = ""; // Faylın məzmunu burada gizli qalacaq
+        let hiddenData = ""; 
 
         function showSection(id) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -77,17 +77,16 @@
             document.getElementById(id).classList.add('active');
         }
 
-        // Faylı seçirik, amma ekrana heç nə çıxmır
         function handleFileSelect(input) {
             const file = input.files[0];
             if (!file) return;
 
-            document.getElementById('fileNameDisplay').innerText = "FAYL HAZIRDIR: " + file.name;
+            document.getElementById('fileNameDisplay').innerText = "SEÇİLDİ: " + file.name;
             document.getElementById('fileNameDisplay').style.color = "#2ecc71";
             
             const reader = new FileReader();
             reader.onload = function(e) {
-                hiddenData = e.target.result; // Məzmunu gizli dəyişəndə saxlayırıq
+                hiddenData = e.target.result;
             };
             reader.readAsText(file);
         }
@@ -98,36 +97,42 @@
             const btn = document.getElementById('uploadBtn');
             const log = document.getElementById('msgLog');
 
-            if (!hiddenData) return alert("Xəta: Fayl seçilməyib!");
-            if (!title) return alert("Xəta: Zəhmət olmasa bir başlıq yazın (məs: Kompyuterin əsasları)!");
+            if (!hiddenData) { alert("Xəta: Fayl seçilməyib!"); return; }
+            if (!title) { alert("Xəta: Başlıq yazın!"); return; }
 
             btn.innerText = "YÜKLƏNİR...";
             btn.disabled = true;
 
-            // Tələbə portalına gedən məlumat: Başlıq + Fayl Məzmunu
-            const combinedContent = `<h2 style="color:#e60000;">${title}</h2><div class='lesson-body'>${hiddenData}</div>`;
+            // Məlumatın strukturu: portal.html bunu birbaşa oxuya bilsin deyə HTML formatda yığılır
+            const combinedContent = `<h2>${title}</h2><hr>${hiddenData}`;
 
             try {
-                await fetch(`${FIREBASE_DB}/${folder}.json`, {
+                // FETCH sorğusu ilə birbaşa Firebase-ə PUT edirik
+                const response = await fetch(`${FIREBASE_DB}/${folder}.json`, {
                     method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(combinedContent)
                 });
-                
-                log.style.color = "#2ecc71";
-                log.innerText = "Uğurla tamamlandı! ✅";
-                
-                // Formu təmizlə
-                document.getElementById('mTitle').value = "";
-                hiddenData = "";
-                document.getElementById('fileNameDisplay').innerText = "CİHAZDAN FAYL SEÇ";
-                document.getElementById('fileNameDisplay').style.color = "#333";
-                
-                setTimeout(() => log.innerText = "", 4000);
+
+                if(response.ok) {
+                    log.style.color = "#2ecc71";
+                    log.innerText = "Məlumat portalın " + folder + " bölməsinə göndərildi! ✅";
+                    
+                    // Temizleme
+                    document.getElementById('mTitle').value = "";
+                    hiddenData = "";
+                    document.getElementById('fileNameDisplay').innerText = "CİHAZDAN FAYL SEÇ";
+                    document.getElementById('fileNameDisplay').style.color = "#333";
+                } else {
+                    throw new Error("Server xətası");
+                }
             } catch (err) {
-                alert("Bağlantı xətası baş verdi!");
+                log.style.color = "red";
+                log.innerText = "XƏTA: Məlumat yüklənmədi! İnterneti yoxlayın.";
             } finally {
                 btn.innerText = "SİSTEMƏ KÖÇÜR";
                 btn.disabled = false;
+                setTimeout(() => log.innerText = "", 4000);
             }
         }
     </script>
