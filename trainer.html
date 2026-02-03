@@ -91,6 +91,7 @@
     <script>
         const FIREBASE_DB = "https://beacademy-c8316-default-rtdb.firebaseio.com/portal_content";
         let hiddenData = ""; 
+        let selectedFileType = "";
 
         window.onload = fetchMaterials;
 
@@ -104,10 +105,20 @@
         function handleFileSelect(input) {
             const file = input.files[0];
             if (!file) return;
+            selectedFileType = file.type;
             document.getElementById('fileNameDisplay').innerText = "SEÇİLDİ: " + file.name;
+            
             const reader = new FileReader();
-            reader.onload = e => hiddenData = e.target.result;
-            reader.readAsText(file);
+            reader.onload = e => {
+                // Əgər PDF-dirsə Base64 (DataURL), mətndirsə düz yazı kimi götürürük
+                hiddenData = e.target.result;
+            };
+
+            if (selectedFileType === "application/pdf") {
+                reader.readAsDataURL(file); // PDF üçün DataURL vacibdir
+            } else {
+                reader.readAsText(file); // Normal yazılar üçün Text
+            }
         }
 
         async function fetchMaterials() {
@@ -119,7 +130,6 @@
                 if (data) {
                     for (let course in data) {
                         if (data[course]) {
-                            // Firebase-dən gələn datadan başlığı çıxarmaq (<h2> içindəki mətni tutur)
                             const match = data[course].match(/<h2>(.*?)<\/h2>/);
                             const displayTitle = match ? match[1] : "Başlıqsız Material";
 
@@ -156,7 +166,19 @@
             btn.innerText = "YÜKLƏNİR...";
             btn.disabled = true;
 
-            const combinedContent = `<h2>${title}</h2><hr>${hiddenData}`;
+            let combinedContent = "";
+
+            if (selectedFileType === "application/pdf") {
+                // PDF üçün xüsusi düymə dizaynı
+                combinedContent = `<h2>${title}</h2>
+                    <div style="background:#f4f4f4; padding:20px; border-radius:10px; text-align:center; border:1px solid #ddd; margin-top:10px;">
+                        <p style="color:#333; font-weight:700;">📄 Bu bölmə üçün PDF materialı yüklənib.</p>
+                        <a href="${hiddenData}" target="_blank" style="display:inline-block; background:#e60000; color:white; padding:12px 25px; text-decoration:none; border-radius:8px; font-weight:800; margin-top:10px;">PDF MATERİALINI AÇ</a>
+                    </div>`;
+            } else {
+                // Normal mətn faylı üçün köhnə qayda
+                combinedContent = `<h2>${title}</h2><hr>${hiddenData}`;
+            }
 
             try {
                 await fetch(`${FIREBASE_DB}/${folder}.json`, {
