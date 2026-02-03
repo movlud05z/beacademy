@@ -1,6 +1,7 @@
 // Konfiqurasiya
 const DB_URL = "https://beacademy-c8316-default-rtdb.firebaseio.com/users";
 const POSTS_URL = "https://beacademy-c8316-default-rtdb.firebaseio.com/posts";
+const CONTENT_URL = "https://beacademy-c8316-default-rtdb.firebaseio.com/portal_content";
 
 // 1. Axtarış Funksiyası
 window.searchStaff = async function() {
@@ -30,7 +31,7 @@ window.searchStaff = async function() {
     } catch (e) { console.error("Axtarış xətası:", e); }
 };
 
-// 2. Profil Açma Funksiyası (Adına basanda işləyən hissə)
+// 2. Profil Açma Funksiyası
 window.openProfile = async function(username) {
     if(!username) {
         username = localStorage.getItem("currentUser");
@@ -41,10 +42,8 @@ window.openProfile = async function(username) {
         const u = await res.json();
         if (!u) return;
 
-        // Modalı göstər
         document.getElementById("profileModal").style.display = "block";
 
-        // Məlumatları doldur
         const avatarImg = document.getElementById("profAvatarImg");
         const initialDiv = document.getElementById("profInitial");
         
@@ -102,6 +101,51 @@ window.loadPosts = async function(username) {
             <b style="color:#e60000; font-size:12px;">@${p.author}</b>
             <p style="margin:5px 0; font-size:13px;">${p.text}</p>
         </div>`).join("");
+};
+
+// 5. MATERIAL SİSTEMİ VƏ YÜKLƏMƏ (YENİ)
+window.fetchCourseMaterials = async function(courseId) {
+    const displayArea = document.getElementById("courseContentArea");
+    if(!displayArea) return;
+    
+    displayArea.innerHTML = "<p style='text-align:center;'>Yüklənir...</p>";
+    
+    try {
+        const res = await fetch(`${CONTENT_URL}/${courseId}.json`);
+        const data = await res.json();
+        
+        if (!data) {
+            displayArea.innerHTML = "<p style='text-align:center; padding:20px;'>Bu bölmə üzrə material yoxdur.</p>";
+            return;
+        }
+
+        // PDF Linkini və Başlığı tapmaq üçün analiz
+        const pdfMatch = data.match(/href="(data:application\/pdf;base64,.*?)"/);
+        const titleMatch = data.match(/<h2>(.*?)<\/h2>/);
+        const fileName = titleMatch ? titleMatch[1] : "material";
+
+        let downloadBtn = "";
+        if (pdfMatch) {
+            downloadBtn = `
+                <div style="margin-top:15px; padding:10px; background:#f0fff4; border:1px solid #c6f6d5; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:13px; color:#276749; font-weight:600;">📄 PDF versiyası hazırdır</span>
+                    <a href="${pdfMatch[1]}" download="${fileName}.pdf" 
+                       style="background:#28a745; color:white; padding:7px 15px; text-decoration:none; border-radius:5px; font-size:11px; font-weight:800; text-transform:uppercase;">
+                       💾 YÜKLƏ
+                    </a>
+                </div>`;
+        }
+
+        displayArea.innerHTML = `
+            <div class="material-body" style="animation: slideUp 0.4s ease;">
+                ${data}
+                ${downloadBtn}
+            </div>
+        `;
+
+    } catch (e) {
+        displayArea.innerHTML = "Xəta baş verdi.";
+    }
 };
 
 // Digər köməkçi funksiyalar
