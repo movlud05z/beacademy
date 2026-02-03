@@ -59,6 +59,7 @@
             background: #fdfdfd; border: 2px solid #eee; padding: 20px;
             border-radius: 20px; margin: 15px 0; text-decoration: none !important;
             transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
         }
         .pdf-download-btn:hover {
             border-color: #e60000; transform: scale(1.02);
@@ -168,7 +169,6 @@
         const currentLog = localStorage.getItem("currentUser");
         const blueTickImg = `<img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" class="verified-badge">`;
 
-        // Lux Decode and Profile functions remain unchanged...
         function luxDecode(element, finalName, isVerified) {
             const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             let iteration = 0;
@@ -251,7 +251,6 @@
             });
         }
 
-        // --- UPDATED OPEN SECTION WITH SMART DOWNLOAD BUTTONS ---
         async function openSection(sectionId) {
             const modal = document.getElementById("contentModal");
             modal.style.display = "block";
@@ -269,17 +268,18 @@
                     return;
                 }
 
-                // PDF Linkini tapıb Professional Butona çevirən məntiq
+                // PDF Tanıma və Həm Açma həm Yükləmə Butonuna çevirmə
                 const pdfRegex = /(https?:\/\/[^\s]+\.pdf[^\s]*)/gi;
                 
                 if (typeof data === 'string') {
+                    // PDF linki varsa onu professional download butona çeviririk
                     const formattedData = data.replace(pdfRegex, function(url) {
                         return `
                             <a href="${url}" target="_blank" download class="pdf-download-btn">
                                 <div class="pdf-icon-wrapper">PDF</div>
                                 <div class="pdf-info-text">
                                     <b>Tədris Materialı</b>
-                                    <span>Yükləmək üçün buraya klikləyin</span>
+                                    <span>Həm açmaq, həm yükləmək üçün klikləyin</span>
                                 </div>
                                 <div class="dl-arrow">↓</div>
                             </a>
