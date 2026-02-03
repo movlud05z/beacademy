@@ -1,6 +1,6 @@
 const FIREBASE_DB = "https://beacademy-c8316-default-rtdb.firebaseio.com/portal_content";
-let hiddenData = ""; 
-let selectedFileType = "";
+window.hiddenData = ""; 
+window.selectedFileType = "";
 
 window.onload = fetchMaterials;
 
@@ -9,27 +9,27 @@ function showSection(id) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     const target = document.getElementById(id);
     if(target) target.classList.add('active');
-    if(event && event.currentTarget) event.currentTarget.classList.add('active');
+    if(window.event && window.event.currentTarget) window.event.currentTarget.classList.add('active');
 }
 
 function handleFileSelect(input) {
     const file = input.files[0];
     if (!file) return;
     
-    selectedFileType = file.type;
+    window.selectedFileType = file.type;
     document.getElementById('fileNameDisplay').innerText = "SEÇİLDİ: " + file.name;
     
     const reader = new FileReader();
     
     reader.onload = e => {
-        hiddenData = e.target.result;
+        window.hiddenData = e.target.result;
+        console.log("Fayl hazır vəziyyətə gətirildi.");
     };
 
-    // PDF üçün Base64, digərləri üçün Text oxuma
     if (file.type === "application/pdf") {
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(file); // PDF üçün DataURL mütləqdir
     } else {
-        reader.readAsText(file);
+        reader.readAsText(file); // Mətn üçün Text
     }
 }
 
@@ -73,21 +73,23 @@ async function pushToDatabase() {
     const btn = document.getElementById('uploadBtn');
     const status = document.getElementById('statusMsg');
 
-    if (!hiddenData || !title) return alert("Həm başlıq daxil edilməli, həm də fayl seçilməlidir!");
+    if (!window.hiddenData || !title) {
+        return alert("Həm başlıq daxil edilməli, həm də fayl seçilməlidir (Və ya fayl hələ oxunur)!");
+    }
 
     btn.innerText = "YÜKLƏNİR...";
     btn.disabled = true;
 
     let combinedContent = "";
 
-    if (selectedFileType === "application/pdf") {
+    if (window.selectedFileType === "application/pdf") {
         combinedContent = `<h2>${title}</h2>
             <div style="background:#f4f4f4; padding:25px; border-radius:12px; text-align:center; border:2px dashed #e60000; margin-top:15px;">
                 <p style="color:#333; font-weight:700; font-size:16px;">📂 PDF dərslik yüklənib</p>
-                <a href="${hiddenData}" target="_blank" style="display:inline-block; background:#e60000; color:white; padding:12px 30px; text-decoration:none; border-radius:8px; font-weight:800; margin-top:10px; box-shadow:0 4px 15px rgba(230,0,0,0.3);">MATERİALINI AÇ (PDF)</a>
+                <a href="${window.hiddenData}" target="_blank" style="display:inline-block; background:#e60000; color:white; padding:12px 30px; text-decoration:none; border-radius:8px; font-weight:800; margin-top:10px; box-shadow:0 4px 15px rgba(230,0,0,0.3);">MATERİALINI AÇ (PDF)</a>
             </div>`;
     } else {
-        combinedContent = `<h2>${title}</h2><hr>${hiddenData}`;
+        combinedContent = `<h2>${title}</h2><hr>${window.hiddenData}`;
     }
 
     try {
@@ -98,10 +100,13 @@ async function pushToDatabase() {
         status.style.color = "green";
         status.innerText = "Sistem yeniləndi! ✅";
         document.getElementById('mTitle').value = "";
-        hiddenData = "";
+        window.hiddenData = "";
         document.getElementById('fileNameDisplay').innerText = "Fayl Seçin";
         fetchMaterials();
-    } catch (err) { status.innerText = "Xəta baş verdi!"; }
+    } catch (err) { 
+        status.style.color = "red";
+        status.innerText = "Xəta baş verdi!"; 
+    }
     finally {
         btn.innerText = "SİSTEMƏ KÖÇÜR";
         btn.disabled = false;
