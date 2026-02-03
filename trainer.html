@@ -14,16 +14,10 @@
         .tab-btn.active { background: #fff; color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .section { display: none; animation: slideUp 0.4s ease; }
         .section.active { display: block; }
-        
-        /* QUTU ÜÇÜN DAHA GÜCLÜ STİL */
-        .upload-area {
-            border: 2px dashed #bbb; padding: 40px; text-align: center; border-radius: 15px;
-            background: #fafafa; cursor: pointer; transition: 0.3s; position: relative;
-        }
+        .upload-area { border: 2px dashed #bbb; padding: 40px; text-align: center; border-radius: 15px; background: #fafafa; cursor: pointer; transition: 0.3s; display: block; }
         .upload-area:hover { border-color: var(--primary); background: #fff5f5; }
-        
-        input[type="text"], select, textarea { padding: 12px; border: 1px solid #ccc; border-radius: 8px; width: 100%; box-sizing: border-box; }
-        .btn { padding: 12px 24px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; width: 100%; }
+        input[type="text"], select, textarea { padding: 12px; border: 1px solid #ccc; border-radius: 8px; width: 100%; box-sizing: border-box; font-family: inherit; }
+        .btn { padding: 12px 24px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; width: 100%; margin-top: 10px; }
         .btn-add { background: #2ecc71; color: white; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -47,33 +41,31 @@
                 
                 <label for="fileInput" class="upload-area">
                     <div style="font-size: 40px; margin-bottom: 10px;">📤</div>
-                    <p id="fileLabel" style="margin: 0; font-weight: 600; color: #666;">Məlumat Hazırlığı</p>
-                    <small style="color: #999;">Cihazdan fayl seçmək üçün bura klikləyin</small>
-                    <input type="file" id="fileInput" style="display:none;" accept=".txt,.html,.js,.css" onchange="handleFileUpload(this)">
+                    <p id="fileLabel" style="margin: 0; font-weight: 600; color: #666;">Fayl Seçin</p>
+                    <small style="color: #999;">Kompyuterdən məlumat yükləmək üçün klikləyin</small>
+                    <input type="file" id="fileInput" style="display:none;" accept=".txt,.html" onchange="handleFileUpload(this)">
                 </label>
 
                 <div style="background: #fff; padding: 20px; border-radius: 15px; border: 1px solid #eee;">
-                    <div style="margin-bottom:10px">
-                        <label>Materialın Mətni:</label>
-                        <textarea id="mTextContent" placeholder="Fayl seçdikdə bura dolacaq..." style="height: 120px; margin-top:5px;"></textarea>
-                    </div>
-                    <div style="margin-bottom:15px">
-                        <label>Bölməni Seçin:</label>
-                        <select id="mCourse" style="margin-top:5px;">
-                            <option value="IT">💻 IT</option>
-                            <option value="KEA">☕ KEA</option>
-                            <option value="BEYAZ">❄️ BEYAZ</option>
-                            <option value="TV">📺 TV</option>
-                        </select>
-                    </div>
+                    <label>Materialın Mətni:</label>
+                    <textarea id="mTextContent" placeholder="Fayl məzmunu bura gələcək..." style="height: 120px; margin-top:5px;"></textarea>
+                    
+                    <label style="display:block; margin-top:15px;">Hədəf Bölmə:</label>
+                    <select id="mCourse" style="margin-top:5px;">
+                        <option value="IT">💻 IT</option>
+                        <option value="KEA">☕ KEA</option>
+                        <option value="BEYAZ">❄️ BEYAZ</option>
+                        <option value="TV">📺 TV</option>
+                    </select>
+                    
                     <button class="btn btn-add" id="saveBtn" onclick="saveToFirebase()">SİSTEMƏ YÜKLƏ</button>
                 </div>
             </div>
             <div id="statusMsg" style="text-align: center; font-weight: bold;"></div>
         </div>
 
-        <div id="quiz" class="section"><h3>İmtahan Sistemi Tezliklə...</h3></div>
-        <div id="control" class="section"><h3>İdarəetmə Paneli Tezliklə...</h3></div>
+        <div id="quiz" class="section"><h3>İmtahan Sistemi Hazırlanır...</h3></div>
+        <div id="control" class="section"><h3>İdarəetmə Paneli Hazırlanır...</h3></div>
     </div>
 
     <script>
@@ -88,32 +80,31 @@
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            event.currentTarget.classList.add('active');
+            if(event) event.currentTarget.classList.add('active');
         }
 
-        // FAYL SEÇİLƏNDƏ İŞLƏYƏN FUNKSİYA
+        // FAYL OXUMA
         function handleFileUpload(input) {
             const file = input.files[0];
             if (!file) return;
 
             document.getElementById('fileLabel').innerText = "Seçildi: " + file.name;
-            document.getElementById('fileLabel').style.color = "var(--primary)";
             
             const reader = new FileReader();
             reader.onload = function(e) {
-                // Faylın içindəki mətni textarea-ya qoyur
                 document.getElementById('mTextContent').value = e.target.result;
             };
             reader.readAsText(file);
         }
 
+        // BAZAYA YAZMA
         async function saveToFirebase() {
             const content = document.getElementById('mTextContent').value;
             const course = document.getElementById('mCourse').value;
             const btn = document.getElementById('saveBtn');
             const status = document.getElementById('statusMsg');
 
-            if (!content.trim()) return alert("Əvvəlcə fayl seçin və ya mətn yazın!");
+            if (!content.trim()) return alert("Məlumat boşdur!");
 
             btn.innerText = "YÜKLƏNİR...";
             btn.disabled = true;
@@ -125,13 +116,12 @@
                 });
                 
                 status.style.color = "green";
-                status.innerText = "Məlumat " + course + " bölməsinə uğurla yükləndi! ✅";
+                status.innerText = course + " bölməsi yeniləndi! ✅";
                 document.getElementById('mTextContent').value = "";
-                document.getElementById('fileLabel').innerText = "Məlumat Hazırlığı";
-                document.getElementById('fileLabel').style.color = "#666";
+                document.getElementById('fileLabel').innerText = "Fayl Seçin";
                 setTimeout(() => status.innerText = "", 4000);
             } catch (err) {
-                alert("Bağlantı xətası!");
+                alert("Xəta!");
             } finally {
                 btn.innerText = "SİSTEMƏ YÜKLƏ";
                 btn.disabled = false;
