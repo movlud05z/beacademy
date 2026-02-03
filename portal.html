@@ -123,8 +123,24 @@
                 let data = await res.json();
                 
                 if(data) {
-                    // Əgər gələn data JSON string daxilindədirsə, onu təmizləyirik
-                    body.innerHTML = data;
+                    // PDF linkini və başlığını tapmaq üçün yoxlayırıq
+                    const pdfMatch = data.match(/href="(data:application\/pdf;base64,.*?)"/);
+                    const titleMatch = data.match(/<h2>(.*?)<\/h2>/);
+                    const cleanFileName = titleMatch ? titleMatch[1].replace(/\s+/g, '_') : "material";
+
+                    let downloadHtml = "";
+                    if(pdfMatch) {
+                        downloadHtml = `
+                        <div style="margin-top:20px; padding:15px; background:#f0fff4; border:1px solid #c6f6d5; border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-weight:700; color:#276749; font-size:14px;">📄 Dərslik Yükləməyə Hazırdır</span>
+                            <a href="${pdfMatch[1]}" download="${cleanFileName}.pdf" 
+                               style="background:#28a745; color:white; padding:10px 20px; text-decoration:none; border-radius:6px; font-weight:800; font-size:12px; box-shadow:0 4px 10px rgba(40,167,69,0.2);">
+                               💾 YÜKLƏ (PDF)
+                            </a>
+                        </div>`;
+                    }
+
+                    body.innerHTML = data + downloadHtml;
                     body.style.fontStyle = "normal";
                     body.style.color = "#333";
                 } else {
