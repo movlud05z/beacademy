@@ -77,12 +77,12 @@
 
     <h1 style="color: #fff; margin: 40px 0 20px; font-weight: 800; text-transform: uppercase; font-size: 22px;">Tədris Bölmələri</h1>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
-        <div class="portal-card"><h3>İT</h3><button class="login-btn">DAXİL OL</button></div>
-        <div class="portal-card"><h3>KEA</h3><button class="login-btn">DAXİL OL</button></div>
-        <div class="portal-card"><h3>BƏYAZ ƏŞYA</h3><button class="login-btn">DAXİL OL</button></div>
-        <div class="portal-card"><h3>TV</h3><button class="login-btn">DAXİL OL</button></div>
-        <div class="portal-card" style="border-color: #2ecc71;"><h3 style="color: #2ecc71;">İMTAHANLAR</h3><button class="login-btn" style="background: #2ecc71;">YOXLA</button></div>
-        <div class="portal-card"><h3>AKADEMİYA RESURLARI</h3><button class="login-btn" style="background:#333;">BAX</button></div>
+        <div class="portal-card" onclick="showSection('IT')"><h3>İT</h3><button class="login-btn">DAXİL OL</button></div>
+        <div class="portal-card" onclick="showSection('KEA')"><h3>KEA</h3><button class="login-btn">DAXİL OL</button></div>
+        <div class="portal-card" onclick="showSection('BEYAZ')"><h3>BƏYAZ ƏŞYA</h3><button class="login-btn">DAXİL OL</button></div>
+        <div class="portal-card" onclick="showSection('TV')"><h3>TV</h3><button class="login-btn">DAXİL OL</button></div>
+        <div class="portal-card" onclick="openQuizList()" style="border-color: #2ecc71;"><h3 style="color: #2ecc71;">İMTAHANLAR</h3><button class="login-btn" style="background: #2ecc71;">YOXLA</button></div>
+        <div class="portal-card" onclick="showSection('TELIMAT')"><h3>AKADEMİYA RESURLARI</h3><button class="login-btn" style="background:#333;">BAX</button></div>
     </div>
 
     <div class="search-section">
@@ -127,23 +127,24 @@
 
     <script src="portal_logic.js"></script> 
     <script>
-        // Səhifə açılan kimi istifadəçini yoxla
-        window.onload = function() {
+        // Səhifə yüklənəndə navbardakı adı və başlanğıc məlumatları gətirir
+        window.onload = async function() {
             const currentLogin = localStorage.getItem("currentUser");
             if (!currentLogin) { 
                 window.location.href = 'index.html'; 
-            } else {
-                // Navbardakı adı yenilə
-                fetch(`https://beacademy-c8316-default-rtdb.firebaseio.com/users/${currentLogin}.json`)
-                .then(res => res.json())
-                .then(u => {
-                    if(u) {
-                        const blueTick = u.isVerified ? `<svg class="verified-badge" viewBox="0 0 24 24" fill="#0095F6" style="width:18px; height:18px; vertical-align:middle; margin-left:5px;"><path d="M10.5213 2.62368C11.3147 1.75255 12.6853 1.75255 13.4787 2.62368L14.4989 3.74391C14.8143 4.09038 15.2573 4.30055 15.7288 4.32717L17.2521 4.41312C18.4383 4.48003 19.38 5.42172 19.4469 6.60786L19.5328 8.13117C19.5595 8.6027 19.7696 9.04567 20.1161 9.36109L21.2363 10.3813C22.1075 11.1747 22.1075 12.5453 21.2363 13.3387L20.1161 14.3589C19.7696 14.6743 19.5595 15.1173 19.5328 15.5888L19.4469 17.1121C19.38 18.2983 18.4383 19.24 17.2521 19.3069L15.7288 19.3928C15.2573 19.4195 14.8143 19.6296 14.4989 19.9751L13.4787 21.0953C12.6853 21.9665 11.3147 21.9665 10.5213 21.0953L9.50106 19.9751C9.18564 19.6296 8.74267 19.4195 8.27117 19.3928L6.74786 19.3069C5.56172 19.24 4.62003 18.2983 4.55312 17.1121L4.46717 15.5888C4.44055 15.1173 4.23038 14.6743 3.88391 14.3589L2.76368 13.3387C1.89255 12.5453 1.89255 11.1747 2.76368 10.3813L3.88391 9.36109C4.23038 9.04567 4.44055 8.6027 4.46717 8.13117L4.55312 6.60786C4.62003 5.42172 5.56172 4.48003 6.74786 4.41312L8.27117 4.32717C8.74267 4.30055 9.18564 4.09038 9.50106 3.74391L10.5213 2.62368Z"/><path d="M9 12L11 14L15 10" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>` : "";
-                        document.getElementById("userNamePortal").innerHTML = u.fullname + blueTick;
-                    }
-                });
+                return;
             }
+            
+            try {
+                const res = await fetch(`https://beacademy-c8316-default-rtdb.firebaseio.com/users/${currentLogin}.json`);
+                const u = await res.json();
+                if (u) {
+                    const blueTick = u.isVerified ? `<svg class="verified-badge" viewBox="0 0 24 24" fill="#0095F6" style="width:18px; height:18px; vertical-align:middle; margin-left:5px;"><path d="M10.5213 2.62368C11.3147 1.75255 12.6853 1.75255 13.4787 2.62368L14.4989 3.74391C14.8143 4.09038 15.2573 4.30055 15.7288 4.32717L17.2521 4.41312C18.4383 4.48003 19.38 5.42172 19.4469 6.60786L19.5328 8.13117C19.5595 8.6027 19.7696 9.04567 20.1161 9.36109L21.2363 10.3813C22.1075 11.1747 22.1075 12.5453 21.2363 13.3387L20.1161 14.3589C19.7696 14.6743 19.5595 15.1173 19.5328 15.5888L19.4469 17.1121C19.38 18.2983 18.4383 19.24 17.2521 19.3069L15.7288 19.3928C15.2573 19.4195 14.8143 19.6296 14.4989 19.9751L13.4787 21.0953C12.6853 21.9665 11.3147 21.9665 10.5213 21.0953L9.50106 19.9751C9.18564 19.6296 8.74267 19.4195 8.27117 19.3928L6.74786 19.3069C5.56172 19.24 4.62003 18.2983 4.55312 17.1121L4.46717 15.5888C4.44055 15.1173 4.23038 14.6743 3.88391 14.3589L2.76368 13.3387C1.89255 12.5453 1.89255 11.1747 2.76368 10.3813L3.88391 9.36109C4.23038 9.04567 4.44055 8.6027 4.46717 8.13117L4.55312 6.60786C4.62003 5.42172 5.56172 4.48003 6.74786 4.41312L8.27117 4.32717C8.74267 4.30055 9.18564 4.09038 9.50106 3.74391L10.5213 2.62368Z"/><path d="M9 12L11 14L15 10" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>` : "";
+                    document.getElementById("userNamePortal").innerHTML = u.fullname + blueTick;
+                }
+            } catch (err) { console.error("Sistem xətası:", err); }
         };
+
         function closeModal(id) { document.getElementById(id).style.display = "none"; }
     </script>
 </body>
