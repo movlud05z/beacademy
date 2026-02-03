@@ -7,72 +7,67 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { background: #1a1a1a; font-family: 'Poppins', sans-serif; margin: 0; padding: 20px; color: #fff; }
-        
-        /* Header */
         header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid #333; }
         .logo { font-size: 22px; font-weight: 800; }
         .be { color: #fff; } .academy { color: #e60000; }
 
-        /* Search Section - Bura mütləq görünməlidir */
+        /* Search Section */
         .search-container { margin: 30px 0; background: #252525; padding: 20px; border-radius: 12px; border: 1px solid #444; }
         .search-input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #e60000; background: #1a1a1a; color: white; box-sizing: border-box; }
-        #staffSearchResults { margin-top: 15px; display: grid; grid-template-columns: 1fr; gap: 10px; }
-        .staff-card { background: #fff; color: #333; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        #staffSearchResults { margin-top: 15px; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
+        .staff-card { background: #fff; color: #333; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s; }
+        .staff-card:hover { transform: scale(1.02); }
 
         /* Grid */
         .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 40px; }
         .portal-card { background: #252525; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #333; }
         .login-btn { background: #e60000; color: white; border: none; padding: 10px; width: 100%; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .follow-btn { background: #0095F6; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .follow-btn.unfollow { background: #555; }
 
-        /* Modal & Profile */
+        /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; overflow-y: auto; }
-        .modal-content { background: white; color: #333; width: 90%; max-width: 500px; margin: 50px auto; padding: 20px; border-radius: 15px; position: relative; }
+        .modal-content { background: white; color: #333; width: 90%; max-width: 450px; margin: 50px auto; padding: 25px; border-radius: 15px; position: relative; text-align: center; }
         .close { position: absolute; right: 20px; top: 10px; font-size: 28px; cursor: pointer; }
         .verified-badge { width: 18px; height: 18px; margin-left: 5px; vertical-align: middle; }
         
-        .post-item { background: #f9f9f9; padding: 10px; border-radius: 8px; margin-top: 10px; border-left: 4px solid #e60000; }
+        .stats { display: flex; justify-content: space-around; margin: 20px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 10px 0; }
+        .stat-val { font-weight: 800; color: #e60000; display: block; }
     </style>
 </head>
 <body>
 
     <header>
         <div class="logo"><span class="be">BE</span><span class="academy">Academy</span></div>
-        <div id="userGreeting">Xoş gəldin, <b id="userNamePortal" style="color: #e60000;">...</b></div>
+        <div style="cursor: pointer;" onclick="openProfile(localStorage.getItem('currentUser'))">
+            Xoş gəldin, <b id="userNamePortal" style="color: #e60000; text-decoration: underline;">...</b>
+        </div>
     </header>
 
-    <h2 style="font-size: 18px; margin-top: 20px;">Tədris Bölmələri</h2>
-    <div class="grid-container">
-        <div class="portal-card"><h3>İT</h3><button class="login-btn">DAXİL OL</button></div>
-        <div class="portal-card"><h3>KEA</h3><button class="login-btn">DAXİL OL</button></div>
-        <div class="portal-card"><h3>BƏYAZ ƏŞYA</h3><button class="login-btn">DAXİL OL</button></div>
-        <div class="portal-card"><h3>TV</h3><button class="login-btn">DAXİL OL</button></div>
-    </div>
-
     <div class="search-container">
-        <h3>🔍 Əməkdaş Axtar</h3>
-        <input type="text" class="search-input" id="staffSearchInput" placeholder="Ad və ya istifadəçi adı yaz..." oninput="searchStaff()">
+        <h3>🔍 Əməkdaş Axtar və İzlə</h3>
+        <input type="text" class="search-input" id="staffSearchInput" placeholder="Ad yazın..." oninput="searchStaff()">
         <div id="staffSearchResults"></div>
     </div>
 
     <div id="profileModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
-            <div id="profHeader" style="text-align: center;">
-                <div id="profAvatar" style="width:70px; height:70px; background:#e60000; color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto; font-size:30px; font-weight:bold;">?</div>
-                <h2 id="profNameDisplay" style="margin:10px 0 5px;"></h2>
-                <p id="profUsernameDisplay" style="color:#666;"></p>
-            </div>
-            
-            <hr>
-            
-            <div id="postBox" style="display:none;">
-                <textarea id="postText" style="width:100%; padding:10px; border-radius:5px;" placeholder="Nə düşünürsən?"></textarea>
-                <button class="login-btn" onclick="savePost()">Paylaş</button>
+            <div id="profAvatar" style="width:80px; height:80px; background:#f0f0f0; color:#e60000; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto; font-size:35px; font-weight:bold; border: 3px solid #e60000;"></div>
+            <h2 id="profNameDisplay" style="margin:15px 0 5px;"></h2>
+            <p id="profUsernameDisplay" style="color:#666; margin-bottom: 15px;"></p>
+
+            <div class="stats">
+                <div><span class="stat-val" id="countPosts">0</span> Post</div>
+                <div><span class="stat-val" id="countFollowers">0</span> İzləyici</div>
+                <div><span class="stat-val" id="countFollowing">0</span> İzlənilən</div>
             </div>
 
-            <div id="userPosts" style="margin-top:20px;">
-                <h4>Paylaşımlar</h4>
-                <div id="postsContainer"></div>
+            <div id="actionButtons"></div>
+
+            <div id="userPosts" style="margin-top:20px; text-align: left;">
+                <h4 style="border-bottom: 1px solid #eee; padding-bottom: 5px;">Paylaşımlar</h4>
+                <div id="postsContainer" style="max-height: 200px; overflow-y: auto;"></div>
             </div>
         </div>
     </div>
@@ -87,15 +82,13 @@
             if(!currentLogin) return;
             const res = await fetch(`${DB_URL}/${currentLogin}.json`);
             const user = await res.json();
-            if(user) {
-                document.getElementById("userNamePortal").innerHTML = user.fullname + (user.isVerified ? tickSVG : "");
-            }
+            if(user) document.getElementById("userNamePortal").innerHTML = user.fullname + (user.isVerified ? tickSVG : "");
         }
 
         async function searchStaff() {
             const input = document.getElementById("staffSearchInput").value.toLowerCase();
             const results = document.getElementById("staffSearchResults");
-            if(input.length < 2) { results.innerHTML = ""; return; }
+            if(input.length < 1) { results.innerHTML = ""; return; }
 
             const res = await fetch(`${DB_URL}.json`);
             const data = await res.json();
@@ -106,7 +99,7 @@
                     results.innerHTML += `
                         <div class="staff-card" onclick="openProfile('${key}')">
                             <span><b>${data[key].fullname}</b> ${data[key].isVerified ? tickSVG : ""}</span>
-                            <span>@${data[key].username}</span>
+                            <span style="font-size: 12px; color: #e60000;">PROFİLƏ BAX</span>
                         </div>`;
                 }
             }
@@ -120,34 +113,47 @@
             document.getElementById("profUsernameDisplay").innerText = "@" + user.username;
             document.getElementById("profAvatar").innerText = user.fullname[0];
             
-            // Post yazma qutusu yalnız sahibinə görünsün
-            document.getElementById("postBox").style.display = (userKey === currentLogin) ? "block" : "none";
+            // İzləmə məntiqi
+            updateFollowUI(userKey);
             
-            displayPosts(userKey);
             document.getElementById("profileModal").style.display = "block";
         }
 
-        function displayPosts(userKey) {
-            const posts = JSON.parse(localStorage.getItem("posts_" + userKey) || "[]");
-            const container = document.getElementById("postsContainer");
-            container.innerHTML = posts.length ? "" : "Hələ post yoxdur.";
-            posts.forEach(p => {
-                container.innerHTML += `<div class="post-item">${p}</div>`;
-            });
+        function updateFollowUI(targetUser) {
+            const actionDiv = document.getElementById("actionButtons");
+            if(targetUser === currentLogin) {
+                actionDiv.innerHTML = `<p style="color: #e60000; font-weight: bold;">Bu sənin profilindir</p>`;
+                return;
+            }
+
+            let following = JSON.parse(localStorage.getItem("following_" + currentLogin) || "[]");
+            const isFollowing = following.includes(targetUser);
+
+            actionDiv.innerHTML = `
+                <button class="follow-btn ${isFollowing ? 'unfollow' : ''}" onclick="toggleFollow('${targetUser}')">
+                    ${isFollowing ? 'İzləməni Dayandır' : 'İzlə +'}
+                </button>
+            `;
+            
+            // Statistika simulyasiyası
+            document.getElementById("countFollowing").innerText = following.length;
+            document.getElementById("countFollowers").innerText = Math.floor(Math.random() * 50); // Nümunə üçün
         }
 
-        function savePost() {
-            const txt = document.getElementById("postText").value;
-            if(!txt) return;
-            const posts = JSON.parse(localStorage.getItem("posts_" + currentLogin) || "[]");
-            posts.unshift(txt);
-            localStorage.setItem("posts_" + currentLogin, JSON.stringify(posts));
-            document.getElementById("postText").value = "";
-            displayPosts(currentLogin);
+        function toggleFollow(targetUser) {
+            let following = JSON.parse(localStorage.getItem("following_" + currentLogin) || "[]");
+            
+            if(following.includes(targetUser)) {
+                following = following.filter(id => id !== targetUser);
+            } else {
+                following.push(targetUser);
+            }
+            
+            localStorage.setItem("following_" + currentLogin, JSON.stringify(following));
+            updateFollowUI(targetUser);
         }
 
         function closeModal() { document.getElementById("profileModal").style.display = "none"; }
-
         init();
     </script>
 </body>
