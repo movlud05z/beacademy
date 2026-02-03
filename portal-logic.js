@@ -5,14 +5,22 @@ const blueTickSVG = `<svg class="verified-badge" viewBox="0 0 24 24" fill="#0095
 
 // 1. Profil açma və data yükləmə
 window.openProfile = async function(username) {
+    if(!username) return;
     const res = await fetch(`${DB_URL}/${username}.json`);
     const u = await res.json();
     if (!u) return;
 
     const avatarImg = document.getElementById("profAvatarImg");
     const initialDiv = document.getElementById("profInitial");
-    if (u.img) { avatarImg.src = u.img; avatarImg.style.display = "block"; initialDiv.style.display = "none"; }
-    else { avatarImg.style.display = "none"; initialDiv.innerText = u.fullname[0]; initialDiv.style.display = "block"; }
+    if (u.img) { 
+        avatarImg.src = u.img; 
+        avatarImg.style.display = "block"; 
+        initialDiv.style.display = "none"; 
+    } else { 
+        avatarImg.style.display = "none"; 
+        initialDiv.innerText = u.fullname ? u.fullname[0] : "?"; 
+        initialDiv.style.display = "block"; 
+    }
 
     document.getElementById("profName").innerHTML = u.fullname + (u.isVerified ? blueTickSVG : "");
     document.getElementById("profUser").innerText = "@" + u.username;
@@ -20,15 +28,18 @@ window.openProfile = async function(username) {
     const isOwn = (username === currentLogin);
     document.getElementById("ownProfileActions").style.display = isOwn ? "flex" : "none";
     document.getElementById("postCreator").style.display = isOwn ? "block" : "none";
-    document.getElementById("profFollowBtn").style.display = isOwn ? "none" : "block";
+    
+    const followBtn = document.getElementById("profFollowBtn");
+    followBtn.style.display = isOwn ? "none" : "block";
 
     // Takib yoxlanışı
     if (!isOwn) {
         const followRes = await fetch(`${DB_URL}/${currentLogin}/following/${username}.json`);
         const isFollowing = await followRes.json();
-        const followBtn = document.getElementById("profFollowBtn");
         followBtn.innerText = isFollowing ? "İZLƏYİRSƏN" : "İZLƏ";
         followBtn.style.background = isFollowing ? "#333" : "#e60000";
+        // Düyməyə funksiyanı təkrar bağlayaq (qaranti olsun)
+        followBtn.onclick = () => window.toggleFollow();
     }
 
     // Statistika
@@ -37,13 +48,13 @@ window.openProfile = async function(username) {
     document.getElementById("followerCount").innerText = followers;
     document.getElementById("followingCount").innerText = following;
 
-    loadPosts(username);
+    window.loadPosts(username);
     document.getElementById("profileModal").style.display = "block";
 };
 
-// 2. Takib etmə funksiyası (TAM İŞLƏK)
+// 2. Takib etmə funksiyası
 window.toggleFollow = async function() {
-    const targetUser = document.getElementById("profUser").innerText.replace("@", "");
+    const targetUser = document.getElementById("profUser").innerText.replace("@", "").trim();
     if (!targetUser || targetUser === currentLogin) return;
 
     const followBtn = document.getElementById("profFollowBtn");
@@ -61,14 +72,11 @@ window.toggleFollow = async function() {
             fetch(`${DB_URL}/${targetUser}/followers/${currentLogin}.json`, { method: 'PUT', body: JSON.stringify(true) })
         ]);
     }
-    openProfile(targetUser); // Profili yenilə ki, rəqəmlər və düymə dəyişsin
+    window.openProfile(targetUser); 
 };
 
-// 3. Cihazdan şəkil yükləmə
+// 3. Digər bütün funksiyaları window-a bağlayırıq (Kəsilmədən)
 window.triggerPhotoUpload = async function() {
-    const profileUser = document.getElementById("profUser").innerText.replace("@", "");
-    if (currentLogin !== profileUser) return;
-
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
@@ -77,34 +85,15 @@ window.triggerPhotoUpload = async function() {
         if (!file) return;
         const reader = new FileReader();
         reader.onload = async (event) => {
-            const base64Image = event.target.result;
-            await fetch(`${DB_URL}/${currentLogin}.patch`, { method: 'PATCH', body: JSON.stringify({ img: base64Image }) });
-            openProfile(currentLogin);
+            await fetch(`${DB_URL}/${currentLogin}.patch`, { method: 'PATCH', body: JSON.stringify({ img: event.target.result }) });
+            window.openProfile(currentLogin);
         };
         reader.readAsDataURL(file);
     };
     input.click();
 };
 
-// 4. Parol dəyişmə
-window.changeUserPassword = async function() {
-    const newPass = prompt("Yeni parol (min. 4 simvol):");
-    if (newPass && newPass.length >= 4) {
-        await fetch(`${DB_URL}/${currentLogin}.patch`, { method: 'PATCH', body: JSON.stringify({ password: newPass }) });
-        alert("Parol yeniləndi!");
-    }
-};
-
-// 5. Şəkli sil
-window.deleteProfilePhoto = async function() {
-    if (confirm("Şəkli silmək istəyirsiniz?")) {
-        await fetch(`${DB_URL}/${currentLogin}.patch`, { method: 'PATCH', body: JSON.stringify({ img: "" }) });
-        openProfile(currentLogin);
-    }
-};
-
-// Postları yükləmə köməkçisi
-async function loadPosts(username) {
+window.loadPosts = async function(username) {
     const res = await fetch(`${POSTS_URL}.json`);
     const all = await res.json() || {};
     const userPosts = Object.values(all).filter(p => p.author === username).reverse();
@@ -115,4 +104,19 @@ async function loadPosts(username) {
             <p style="margin:5px 0; font-size:13px;">${p.text}</p>
             <small style="color:#999; font-size:10px;">${p.date}</small>
         </div>`).join("");
-}
+};
+
+window.changeUserPassword = async function() {
+    const newPass = prompt("Yeni parol (min. 4 simvol):");
+    if (newPass && newPass.length >= 4) {
+        await fetch(`${DB_URL}/${currentLogin}.patch`, { method: 'PATCH', body: JSON.stringify({ password: newPass }) });
+        alert("Parol yeniləndi!");
+    }
+};
+
+window.deleteProfilePhoto = async function() {
+    if (confirm("Şəkli silmək istəyirsiniz?")) {
+        await fetch(`${DB_URL}/${currentLogin}.patch`, { method: 'PATCH', body: JSON.stringify({ img: "" }) });
+        window.openProfile(currentLogin);
+    }
+};
