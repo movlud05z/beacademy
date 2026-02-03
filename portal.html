@@ -28,8 +28,22 @@
         .architect-node { border-top: 5px solid #0095F6 !important; box-shadow: 0 5px 15px rgba(0, 149, 246, 0.4); margin-top: 40px; }
 
         .search-section { margin-top: 50px; background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 15px; }
-        .staff-card { background: #fff; padding: 12px; border-radius: 8px; margin-top: 10px; color: #333; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .staff-card { background: #fff; padding: 12px; border-radius: 8px; margin-top: 10px; color: #333; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s; }
+        .staff-card:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        
+        /* Premium Seçilən Kartlar */
+        .premium-card { border-left: 5px solid #0095F6 !important; background: linear-gradient(90deg, #fff, #f0f8ff) !important; position: relative; }
+        .premium-card::after { content: "PREMIUM"; position: absolute; right: 40px; font-size: 8px; font-weight: 900; color: #0095F6; letter-spacing: 1px; }
+
         .verified-badge { width: 16px; height: 16px; margin-left: 5px; vertical-align: middle; }
+
+        /* LUX PROFIL DIZAYNI */
+        .lux-header { background: linear-gradient(135deg, #1a1a1a 0%, #333 100%); height: 100px; border-radius: 10px 10px 0 0; margin: -30px -30px 40px -30px; position: relative; }
+        .lux-avatar-wrap { position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%); }
+        .lux-avatar { width: 100px; height: 100px; background: #fff; border-radius: 50%; border: 4px solid #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 800; color: #e60000; overflow: hidden; }
+        .lux-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .premium-glow { position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 50%; box-shadow: 0 0 20px rgba(0, 149, 246, 0.5); animation: pulse 2s infinite; pointer-events: none; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0px rgba(0, 149, 246, 0.4); } 50% { box-shadow: 0 0 20px rgba(0, 149, 246, 0.7); } 100% { box-shadow: 0 0 0px rgba(0, 149, 246, 0.4); } }
     </style>
 </head>
 <body class="dynamic-body">
@@ -84,15 +98,32 @@
     <div class="search-section">
         <h2 style="color: #fff; margin-bottom: 15px; font-size: 16px; opacity: 0.8;">🔍 ƏMƏKDAŞLAR</h2>
         <input type="text" id="staffSearchInput" oninput="searchStaff()" placeholder="Ad yaz..." style="width:100%; max-width:400px; padding:12px; border-radius:5px; border:none; background: rgba(255,255,255,0.1); color: #fff;">
-        <div id="staffSearchResults"></div>
+        <div id="staffSearchResults" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-top: 20px;"></div>
     </div>
 
     <div id="profileModal">
-        <div class="modal-container">
-            <span class="close-btn" onclick="document.getElementById('profileModal').style.display='none'">&times;</span>
-            <div id="profInit" style="width:80px; height:80px; background:#f0f0f0; border-radius:50%; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:800; color:#e60000;"></div>
-            <h2 id="profName" style="margin:0; display: flex; align-items: center; justify-content: center;"></h2>
-            <p id="profUser" style="color:#e60000; font-weight:bold;"></p>
+        <div class="modal-container" style="padding: 30px 0 40px 0; overflow: hidden;">
+            <span class="close-btn" onclick="document.getElementById('profileModal').style.display='none'" style="z-index: 10; color: #fff;">&times;</span>
+            <div class="lux-header" id="luxHeader"></div>
+            <div class="lux-avatar-wrap">
+                <div class="lux-avatar" id="profInit"></div>
+                <div id="premiumGlow"></div>
+            </div>
+            <div style="padding: 0 30px;">
+                <h2 id="profName" style="margin: 0; font-size: 26px; font-weight: 800; color: #1a1a1a;"></h2>
+                <p id="profUser" style="color:#666; font-weight:600; font-size: 14px; margin-top: 5px;"></p>
+                <div id="premiumBadge" style="display:none; margin: 15px auto; width: fit-content; background: #0095F6; color: white; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; letter-spacing: 1px;">PREMIUM MEMBER</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px;">
+                    <div style="background: #f8f8f8; padding: 15px; border-radius: 12px; border-bottom: 3px solid #e60000;">
+                        <span style="display: block; font-size: 10px; color: #888; font-weight: 700;">STATUS</span>
+                        <span style="font-size: 13px; font-weight: 700;">Aktiv Üzv</span>
+                    </div>
+                    <div style="background: #f8f8f8; padding: 15px; border-radius: 12px; border-bottom: 3px solid #0095F6;">
+                        <span style="display: block; font-size: 10px; color: #888; font-weight: 700;">BÖLMƏ</span>
+                        <span style="font-size: 13px; font-weight: 700;">BE Academy</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -123,7 +154,6 @@
                 let data = await res.json();
                 
                 if(data) {
-                    // PDF linkini və başlığını tapmaq üçün yoxlayırıq
                     const pdfMatch = data.match(/href="(data:application\/pdf;base64,.*?)"/);
                     const titleMatch = data.match(/<h2>(.*?)<\/h2>/);
                     const cleanFileName = titleMatch ? titleMatch[1].replace(/\s+/g, '_') : "material";
@@ -139,16 +169,11 @@
                             </a>
                         </div>`;
                     }
-
                     body.innerHTML = data + downloadHtml;
-                    body.style.fontStyle = "normal";
-                    body.style.color = "#333";
                 } else {
-                    body.innerHTML = "<div style='text-align:center; font-style:italic; color:#666;'>Hələ ki, bu bölmə üzrə təlimat və ya məlumat ötürülməyib.</div>";
+                    body.innerHTML = "<div style='text-align:center; font-style:italic; color:#666;'>Hələ ki, məlumat yoxdur.</div>";
                 }
-            } catch (err) {
-                body.innerHTML = "Məlumatı yükləyərkən xəta baş verdi.";
-            }
+            } catch (err) { body.innerHTML = "Xəta!"; }
         }
 
         async function openMyProfile(user) {
@@ -159,7 +184,28 @@
                 document.getElementById("profileModal").style.display = "block";
                 document.getElementById("profName").innerHTML = u.fullname + (u.isVerified ? blueTick : "");
                 document.getElementById("profUser").innerText = "@" + u.username;
-                document.getElementById("profInit").innerText = u.fullname[0];
+                
+                const avatarDiv = document.getElementById("profInit");
+                if(u.img) {
+                    avatarDiv.innerHTML = `<img src="${u.img}">`;
+                } else {
+                    avatarDiv.innerText = u.fullname[0];
+                }
+
+                // Premium Effektləri
+                const glow = document.getElementById("premiumGlow");
+                const badge = document.getElementById("premiumBadge");
+                const header = document.getElementById("luxHeader");
+
+                if(u.isVerified) {
+                    glow.className = "premium-glow";
+                    badge.style.display = "block";
+                    header.style.background = "linear-gradient(135deg, #004e92 0%, #000428 100%)";
+                } else {
+                    glow.className = "";
+                    badge.style.display = "none";
+                    header.style.background = "linear-gradient(135deg, #1a1a1a 0%, #333 100%)";
+                }
             }
         }
 
@@ -172,7 +218,20 @@
             resDiv.innerHTML = "";
             Object.values(users).forEach(u => {
                 if(u.fullname && u.fullname.toLowerCase().includes(val)) {
-                    resDiv.innerHTML += `<div class="staff-card" onclick="openMyProfile('${u.username}')"><b>${u.fullname}${u.isVerified?blueTick:''}</b> <span>@${u.username}</span></div>`;
+                    const isPrem = u.isVerified ? 'premium-card' : '';
+                    resDiv.innerHTML += `
+                    <div class="staff-card ${isPrem}" onclick="openMyProfile('${u.username}')">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div style="width:40px; height:40px; border-radius:50%; background:#f0f0f0; display:flex; align-items:center; justify-content:center; overflow:hidden; border: 2px solid ${u.isVerified?'#0095F6':'#eee'}">
+                                ${u.img ? `<img src="${u.img}" style="width:100%; height:100%; object-fit:cover;">` : `<b style="color:#e60000">${u.fullname[0]}</b>`}
+                            </div>
+                            <div style="line-height:1.2">
+                                <b style="font-size:14px;">${u.fullname}${u.isVerified?blueTick:''}</b><br>
+                                <span style="font-size:11px; color:#888;">@${u.username}</span>
+                            </div>
+                        </div>
+                        <span style="color:#ccc;">→</span>
+                    </div>`;
                 }
             });
         }
